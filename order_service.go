@@ -96,13 +96,13 @@ func (s *CancelOrderTx) validate() (err error) {
 		return nil
 	}
 	if s.symbol == "" {
-		return fmt.Errorf("Invalid symbol")
+		return fmt.Errorf("invalid symbol")
 	}
 	if s.order_id == "" {
-		return fmt.Errorf("Invalid order_id")
+		return fmt.Errorf("invalid order_id")
 	}
 	if s.order_side == "" {
-		return fmt.Errorf("Invalid order_side")
+		return fmt.Errorf("invalid order_side")
 	}
 	return nil
 
@@ -161,7 +161,7 @@ func (s *GetOpenOrdersTx) Do(ctx context.Context) (res types.GetOpenOrdersRespon
 
 func (s *GetOpenOrdersTx) validate() (err error) {
 	if s.symbol == "" {
-		return fmt.Errorf("Invalid symbol")
+		return fmt.Errorf("invalid symbol")
 	}
 	return nil
 }
@@ -245,19 +245,19 @@ func (s *GetOrderHistoryTx) Do(ctx context.Context) (res types.GetOrderHistoryRe
 
 func (s *GetOrderHistoryTx) validate() (err error) {
 	if s.symbol == "" {
-		return fmt.Errorf("Require symbol")
+		return fmt.Errorf("require symbol")
 	}
 	if s.page < 0 {
-		return fmt.Errorf("Invalid page")
+		return fmt.Errorf("invalid page")
 	}
 	if s.limit < 0 {
-		return fmt.Errorf("Invalid limit")
+		return fmt.Errorf("invalid limit")
 	}
 	if s.start < 0 {
-		return fmt.Errorf("Invalid start")
+		return fmt.Errorf("invalid start")
 	}
 	if s.end < 0 {
-		return fmt.Errorf("Invalid end")
+		return fmt.Errorf("invalid end")
 	}
 	return nil
 }
@@ -346,13 +346,13 @@ func (s *GetOrderInfoTx) validate() (err error) {
 		return nil
 	}
 	if s.symbol == "" {
-		return fmt.Errorf("Invalid symbol")
+		return fmt.Errorf("invalid symbol")
 	}
 	if s.order_id == "" {
-		return fmt.Errorf("Invalid order_id")
+		return fmt.Errorf("invalid order_id")
 	}
 	if s.order_side == "" {
-		return fmt.Errorf("Invalid order_side")
+		return fmt.Errorf("invalid order_side")
 	}
 	return nil
 

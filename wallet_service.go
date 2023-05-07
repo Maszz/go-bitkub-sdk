@@ -7,7 +7,6 @@ import (
 	"github.com/bytedance/sonic"
 
 	"github.com/Maszz/go-bitkub-sdk/types"
-	BitkubTs "github.com/Maszz/go-bitkub-sdk/types"
 	"github.com/Maszz/go-bitkub-sdk/utils"
 
 	"github.com/valyala/fasthttp"
@@ -17,7 +16,7 @@ type GetWalletsTx struct {
 	c *Client
 }
 
-func (s *GetWalletsTx) Do(ctx context.Context) (res BitkubTs.WalletResponse, err error) {
+func (s *GetWalletsTx) Do(ctx context.Context) (res types.WalletResponse, err error) {
 	r := &request{
 		method:   fasthttp.MethodPost,
 		endpoint: types.MarketWalletEndpoint,
@@ -26,7 +25,7 @@ func (s *GetWalletsTx) Do(ctx context.Context) (res BitkubTs.WalletResponse, err
 	/*
 		// do hmac and sign payload + cal payload stuff.
 	*/
-	payload := BitkubTs.BalancesPayload{
+	payload := types.BalancesPayload{
 		Ts: utils.CurrentTimestamp(),
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))
@@ -52,7 +51,7 @@ func (s *GetWalletsTx) Do(ctx context.Context) (res BitkubTs.WalletResponse, err
 	return res, nil
 }
 
-func (s *GetWalletsTx) DoAny(ctx context.Context) (res BitkubTs.WalletResponseAny, err error) {
+func (s *GetWalletsTx) DoAny(ctx context.Context) (res types.WalletResponseAny, err error) {
 
 	r := &request{
 		method:   fasthttp.MethodPost,
@@ -62,7 +61,7 @@ func (s *GetWalletsTx) DoAny(ctx context.Context) (res BitkubTs.WalletResponseAn
 	/*
 		// do hmac and sign payload + cal payload stuff.
 	*/
-	payload := BitkubTs.BalancesPayload{
+	payload := types.BalancesPayload{
 		Ts: utils.CurrentTimestamp(),
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))

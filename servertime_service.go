@@ -30,7 +30,5 @@ func (s *GetServerTimeTx) Do(ctx context.Context) (res uint64, err error) {
 		return 0, err
 	}
 
-	// setparmas stuff.
-
 	return resp, nil
 }

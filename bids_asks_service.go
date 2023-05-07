@@ -308,7 +308,7 @@ func (s *PlaceAskTx) validate() error {
 		return fmt.Errorf("symbol is mandatory")
 	}
 	if s.amount <= 0 {
-		return fmt.Errorf("Invalid amount")
+		return fmt.Errorf("invalid amount")
 	}
 	if s.rate == 0 && s.order_type != types.OrderTypeMarket {
 		return fmt.Errorf("rate is mandatory")
