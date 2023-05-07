@@ -214,7 +214,7 @@ func (s *PlaceBidTx) validate() error {
 	if s.amount == 0 {
 		return fmt.Errorf("amount is mandatory")
 	}
-	if s.rate == 0 {
+	if s.rate == 0 && s.order_type != types.OrderTypeMarket {
 		return fmt.Errorf("rate is mandatory")
 	}
 	if s.order_type == "" {
@@ -310,8 +310,8 @@ func (s *PlaceAskTx) validate() error {
 	if s.amount <= 0 {
 		return fmt.Errorf("Invalid amount")
 	}
-	if s.rate <= 0 {
-		return fmt.Errorf("Invalid rate")
+	if s.rate == 0 && s.order_type != types.OrderTypeMarket {
+		return fmt.Errorf("rate is mandatory")
 	}
 	if s.order_type == "" {
 		return fmt.Errorf("order_type is mandatory")

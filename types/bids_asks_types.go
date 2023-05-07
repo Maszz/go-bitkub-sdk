@@ -34,7 +34,7 @@ type PlaceBidAskPayload struct {
 	Sig      Signature `json:"sig,omitempty"`
 	Symbol   Symbol    `json:"sym,omitempty"`
 	Amount   float64   `json:"amt,omitempty"`
-	Rate     float64   `json:"rat,omitempty"`
+	Rate     float64   `json:"rat"`
 	Type     OrderType `json:"typ,omitempty"`
 	ClientID string    `json:"client_id,omitempty"`
 }
