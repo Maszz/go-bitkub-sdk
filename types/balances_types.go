@@ -3,8 +3,8 @@ package types
 import "github.com/bytedance/sonic"
 
 type BalancesPayload struct {
-	Ts  int64  `json:"ts,omitempty"`
-	Sig string `json:"sig,omitempty"`
+	Ts  Timestamp `json:"ts,omitempty"`
+	Sig Signature `json:"sig,omitempty"`
 }
 type BalancesProps struct {
 	Available float64 `json:"available"`

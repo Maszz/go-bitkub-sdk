@@ -25,5 +25,6 @@
 # Dependencies
 /vendor/
 vendor/
+cmd/
 vendor
 /Godeps/

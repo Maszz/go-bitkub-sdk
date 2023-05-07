@@ -4,19 +4,20 @@ import (
 	"context"
 	"encoding/binary"
 
+	"github.com/Maszz/go-bitkub-sdk/types"
 	"github.com/bytedance/sonic"
 
 	"github.com/valyala/fasthttp"
 )
 
-type GetServerTimeService struct {
+type GetServerTimeTx struct {
 	c *Client
 }
 
-func (s *GetServerTimeService) Do(ctx context.Context) (res uint64, err error) {
+func (s *GetServerTimeTx) Do(ctx context.Context) (res uint64, err error) {
 	r := &request{
 		method:   fasthttp.MethodGet,
-		endpoint: servertime_endpoint,
+		endpoint: types.ServertimeEndpoint,
 		signed:   secTypeNone,
 	}
 	data, err := s.c.callAPI(ctx, r)

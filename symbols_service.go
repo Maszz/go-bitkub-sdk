@@ -5,32 +5,35 @@ import (
 
 	"github.com/bytedance/sonic"
 
-	BitkubTs "github.com/Maszz/go-bitkub-sdk/types"
+	"github.com/Maszz/go-bitkub-sdk/types"
 
 	"github.com/valyala/fasthttp"
 )
 
-type SymbolsService struct {
+type GetSymbolsTx struct {
 	c *Client
 }
 
-func (s *SymbolsService) Do(ctx context.Context) (res BitkubTs.SymbolsResponse, err error) {
+func (s *GetSymbolsTx) Do(ctx context.Context) (res types.SymbolsResponse, err error) {
 	r := &request{
 		method:   fasthttp.MethodGet,
-		endpoint: market_symbols_endpoint,
+		endpoint: types.MarketSymbolsEndpoint,
 		signed:   secTypeNone,
 	}
 	data, err := s.c.callAPI(ctx, r)
 	if err != nil {
-		return BitkubTs.SymbolsResponse{}, err
+		return res, err
 	}
-	resp := BitkubTs.SymbolsResponse{}
-	err = sonic.Unmarshal(data, &resp)
+	respErr := s.c.catchApiError(data)
+	if respErr != nil {
+		return res, respErr
+	}
+	err = sonic.Unmarshal(data, &res)
 	if err != nil {
-		return BitkubTs.SymbolsResponse{}, err
+		return res, err
 	}
 
 	// setparmas stuff.
 
-	return resp, nil
+	return res, nil
 }

@@ -5,19 +5,19 @@ import (
 
 	"github.com/bytedance/sonic"
 
-	BitkubTs "github.com/Maszz/go-bitkub-sdk/types"
+	"github.com/Maszz/go-bitkub-sdk/types"
 
 	"github.com/valyala/fasthttp"
 )
 
-type GetStatusService struct {
+type GetStatusTx struct {
 	c *Client
 }
 
-func (s *GetStatusService) Do(ctx context.Context) (res BitkubTs.ServerStatusArray, err error) {
+func (s *GetStatusTx) Do(ctx context.Context) (res types.ServerStatusArray, err error) {
 	r := &request{
 		method:   fasthttp.MethodGet,
-		endpoint: status_endpoint,
+		endpoint: types.StatusEndpoint,
 		signed:   secTypeNone,
 	}
 	data, err := s.c.callAPI(ctx, r)

@@ -7,27 +7,27 @@ import (
 
 	"github.com/Maszz/go-bitkub-sdk/utils"
 
-	BitkubTs "github.com/Maszz/go-bitkub-sdk/types"
+	"github.com/Maszz/go-bitkub-sdk/types"
 	"github.com/valyala/fasthttp"
 )
 
-type GetBalancesService struct {
+type GetBalancesTx struct {
 	c *Client
 }
 
-func (s *GetBalancesService) Do(ctx context.Context) (res BitkubTs.BalancesResponse, err error) {
+func (s *GetBalancesTx) Do(ctx context.Context) (res types.BalancesResponse, err error) {
 	r := &request{
 		method:   fasthttp.MethodPost,
-		endpoint: market_balances_endpoint,
+		endpoint: types.MarketBalancesEndpoint,
 		signed:   secTypeSigned,
 	}
 	/*
 		// do hmac and sign payload + cal payload stuff.
 	*/
-	payload := BitkubTs.BalancesPayload{
+	payload := types.BalancesPayload{
 		Ts: utils.CurrentTimestamp(),
 	}
-	payload.Sig = s.c.signPayload(payload)
+	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
 	if err != nil {
 		return res, err
@@ -38,6 +38,10 @@ func (s *GetBalancesService) Do(ctx context.Context) (res BitkubTs.BalancesRespo
 
 	if err != nil {
 		return res, err
+	}
+	respErr := s.c.catchApiError(data)
+	if respErr != nil {
+		return res, respErr
 	}
 	err = sonic.Unmarshal(data, &res)
 	if err != nil {
@@ -49,19 +53,19 @@ func (s *GetBalancesService) Do(ctx context.Context) (res BitkubTs.BalancesRespo
 	return res, nil
 }
 
-func (s *GetBalancesService) DoAny(ctx context.Context) (res BitkubTs.BalancesResponseAny, err error) {
+func (s *GetBalancesTx) DoAny(ctx context.Context) (res types.BalancesResponseAny, err error) {
 	r := &request{
 		method:   fasthttp.MethodPost,
-		endpoint: market_balances_endpoint,
+		endpoint: types.MarketBalancesEndpoint,
 		signed:   secTypeSigned,
 	}
 	/*
 		// do hmac and sign payload + cal payload stuff.
 	*/
-	payload := BitkubTs.BalancesPayload{
+	payload := types.BalancesPayload{
 		Ts: utils.CurrentTimestamp(),
 	}
-	payload.Sig = s.c.signPayload(payload)
+	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
 	if err != nil {
 		return res, err
@@ -71,7 +75,11 @@ func (s *GetBalancesService) DoAny(ctx context.Context) (res BitkubTs.BalancesRe
 	data, err := s.c.callAPI(ctx, r)
 
 	if err != nil {
-		return BitkubTs.BalancesResponseAny{}, err
+		return types.BalancesResponseAny{}, err
+	}
+	respErr := s.c.catchApiError(data)
+	if respErr != nil {
+		return res, respErr
 	}
 	// resp := BitkubTs.BalancesResponseAny{}
 	err = sonic.Unmarshal(data, &res)

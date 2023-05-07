@@ -12,66 +12,11 @@ import (
 
 	"github.com/bytedance/sonic"
 
-	hc "github.com/Maszz/go-bitkub-sdk/utils/http_client"
+	"github.com/Maszz/go-bitkub-sdk/utils/http_client"
 
-	BitkubTs "github.com/Maszz/go-bitkub-sdk/types"
+	"github.com/Maszz/go-bitkub-sdk/types"
 
 	"github.com/valyala/fasthttp"
-)
-
-const (
-	x_btk_apikey   = "X-BTK-APIKEY"
-	baseAPIMainURL = "https://api.bitkub.com"
-)
-
-const (
-	/*
-		Non-secure endpoints
-	*/
-	status_endpoint              = "/api/status"
-	servertime_endpoint          = "/api/servertime"
-	market_symbols_endpoint      = "/api/market/symbols"
-	market_ticker_endpoint       = "/api/market/ticker"
-	market_trades_endpoint       = "/api/market/trades"
-	market_bids_endpoint         = "/api/market/bids"
-	market_asks_endpoint         = "/api/market/asks"
-	market_books_endpoint        = "/api/market/books"
-	market_depth_endpoint        = "/api/market/depth"
-	tradingview_history_endpoint = "/tradingview/history"
-
-	/*
-		Secure endpoints
-	*/
-	market_wallet_endpoint            = "/api/market/wallet"
-	market_balances_endpoint          = "/api/market/balances"
-	market_place_bid_endpoint         = "/api/market/place-bid"
-	market_place_ask_endpoint         = "/api/market/place-ask"
-	market_place_ask_by_fiat_endpoint = "/api/market/place-ask-by-fiat"
-	market_cancel_order_endpoint      = "/api/market/cancel-order"
-	market_my_open_orders_endpoint    = "/api/market/my-open-orders"
-	market_my_order_history_endpoint  = "/api/market/my-order-history"
-	market_order_info_endpoint        = "/api/market/order-info"
-	crypto_addresses_endpoint         = "/api/crypto/addresses"
-	crypto_withdraw_endpoint          = "/api/crypto/withdraw"
-	crypto_internal_widraw_endpoint   = "/api/crypto/internal-withdraw"
-	crypto_deposit_history_endpoint   = "/api/crypto/deposit-history"
-	crypto_withdraw_history_endpoint  = "/api/crypto/withdraw-history"
-	crypto_generatre_address          = "/api/crypto/generate-address"
-	fiat_accounts_endpoint            = "/api/fiat/accounts"
-	fiat_withdraw_endpoint            = "/api/fiat/withdraw"
-	fiat_deposit_history_endpoint     = "/api/fiat/deposit-history"
-	fiat_withdraw_history_endpoint    = "/api/fiat/withdraw-history"
-
-	market_wstoken_endpoint = "/api/market/wstoken"
-	user_limits_endpoint    = "/api/user/limits"
-	user_trading_credits    = "/api/user/trading-credits"
-
-	market_v2_place_bid_endpoint    = "/api/market/v2/place-bid"
-	market_v2_place_ask_endpoint    = "/api/market/v2/place-ask"
-	market_v2_cancel_order_endpoint = "/api/market/v2/cancel-order"
-
-	place_bid_test_endpoint = "/api/market/place-bid/test"
-	place_ask_test_endpoint = "/api/market/place-ask/test"
 )
 
 type Client struct {
@@ -79,7 +24,7 @@ type Client struct {
 	SecretKey  string
 	BaseURL    string
 	UserAgent  string
-	HTTPClient *hc.HttpClient
+	HTTPClient *http_client.HttpClient
 	Debug      bool
 	Logger     *log.Logger
 	TimeOffset int64
@@ -90,7 +35,7 @@ Not tested how Big Struct will affect performance.
 */
 func init() {
 	fmt.Println("warmup")
-	var v BitkubTs.TickerResponse
+	var v types.TickerResponse
 	sonic.Pretouch(reflect.TypeOf(v))
 }
 
@@ -100,9 +45,9 @@ func NewClient(apiKey, secretKey string) *Client {
 	return &Client{
 		APIKey:     apiKey,
 		SecretKey:  secretKey,
-		BaseURL:    baseAPIMainURL,
+		BaseURL:    types.BaseAPIMainURL,
 		UserAgent:  "Bitkub-sdk/golang",
-		HTTPClient: hc.NewHttpClient(),
+		HTTPClient: http_client.NewHttpClient(),
 		Logger:     log.New(os.Stderr, "Bitkub-golang ", log.LstdFlags),
 	}
 }
@@ -128,7 +73,7 @@ func (c *Client) parseRequest(r *request) (err error) {
 
 	if r.signed == secTypeSigned {
 		headers.Set("Accept", "application/json")
-		headers.Set(x_btk_apikey, c.APIKey)
+		headers.Set(types.X_btk_apikey, c.APIKey)
 	}
 	if len(r.body) > 0 {
 		headers.Set("Content-Type", "application/json")
@@ -151,42 +96,124 @@ func (c *Client) callAPI(ctx context.Context, r *request) (data []byte, err erro
 	// tranform request object to fasthttp request object
 	fmt.Println("calling api", r.query.String())
 	req := c.HTTPClient.DoRequest(r.fullUrl, r.method, r.body, r.headers)
+	// parse only error response
 
 	return req, err
 }
 
-func (c *Client) NewTestService() *TestService {
-	return &TestService{c: c}
+func (c *Client) parseError(data []byte) types.ApiError {
+	var errResp types.ApiResponseError
+	err := sonic.Unmarshal(data, &errResp)
+	if err != nil {
+		return types.ApiError{ErrorId: -1, ErrorDesc: "Unmarshal error"}
+	}
+
+	if errResp.Error == 0 {
+		return types.ApiError{ErrorId: 0, ErrorDesc: types.BitkubApiErrors[types.ApiNoError]}
+	}
+
+	errMessage := types.BitkubApiErrors[errResp.Error]
+
+	return types.ApiError{ErrorId: errResp.Error, ErrorDesc: errMessage}
 }
 
-func (c *Client) NewTestSignedService() *TestSignedService {
-	return &TestSignedService{c: c}
+func (c *Client) catchApiError(data []byte) error {
+	err := c.parseError(data)
+	if err.ErrorId != 0 {
+		return fmt.Errorf("error id: %d, error message: %s", err.ErrorId, err.ErrorDesc)
+	}
+	return nil
 }
 
-func (c *Client) NewGetBalancesService() *GetBalancesService {
-	return &GetBalancesService{c: c}
+// func (c *Client) NewTestService() *TestService {
+// 	return &TestService{c: c}
+// }
+// func (c *Client) NewTestSignedService() *TestSignedService {
+// 	return &TestSignedService{c: c}
+// }
+
+func (c *Client) NewGetStatusTx() *GetStatusTx {
+	return &GetStatusTx{c: c}
 }
 
-func (c *Client) NewGetStatusService() *GetStatusService {
-	return &GetStatusService{c: c}
+func (c *Client) NewGetServerTimeTx() *GetServerTimeTx {
+	return &GetServerTimeTx{c: c}
 }
 
-func (c *Client) NewGetServerTimeService() *GetServerTimeService {
-	return &GetServerTimeService{c: c}
+func (c *Client) NewGetSymbolsTx() *GetSymbolsTx {
+	return &GetSymbolsTx{c: c}
 }
 
-func (c *Client) NewGetTickerService() *GetTickerService {
-	return &GetTickerService{c: c}
+func (c *Client) NewGetTickerTx() *GetTickerTx {
+	return &GetTickerTx{c: c}
 }
 
-func (c *Client) NewGetTradesService() *GetTradesService {
-	return &GetTradesService{c: c}
+func (c *Client) NewGetTradesTx() *GetTradesTx {
+	return &GetTradesTx{c: c}
 }
 
-func (c *Client) NewGetBidsService() *GetBidsService {
-	return &GetBidsService{c: c}
+func (c *Client) NewGetBidsTx() *GetBidsTx {
+	return &GetBidsTx{c: c}
 }
 
-func (c *Client) NewGetAsksService() *GetAsksService {
-	return &GetAsksService{c: c}
+func (c *Client) NewGetAsksTx() *GetAsksTx {
+	return &GetAsksTx{c: c}
+}
+
+func (c *Client) NewGetBooksTx() *GetOpenBooksTx {
+	return &GetOpenBooksTx{c: c}
+}
+
+func (c *Client) NewGetMarketDepthTx() *GetMarketDepthTx {
+	return &GetMarketDepthTx{c: c}
+}
+
+func (c *Client) NewGetTradingviewHistoryTx() *GetTradingViewHistoryTx {
+	return &GetTradingViewHistoryTx{c: c}
+}
+
+func (c *Client) NewGetWalletsTx() *GetWalletsTx {
+	return &GetWalletsTx{c: c}
+}
+
+func (c *Client) NewGetBalancesTx() *GetBalancesTx {
+	return &GetBalancesTx{c: c}
+}
+
+func (c *Client) NewPlaceBidTx() *PlaceBidTx {
+	return &PlaceBidTx{c: c}
+}
+
+func (c *Client) NewPlaceAskTx() *PlaceAskTx {
+	return &PlaceAskTx{c: c}
+}
+
+func (c *Client) NewCancelOrderTx() *CancelOrderTx {
+	return &CancelOrderTx{c: c}
+}
+
+func (c *Client) NewGetOpenOrdersTx() *GetOpenOrdersTx {
+	return &GetOpenOrdersTx{c: c}
+}
+
+func (c *Client) NewGetOrderHistoryTx() *GetOrderHistoryTx {
+	return &GetOrderHistoryTx{c: c}
+}
+
+func (c *Client) NewGetOrderInfoTx() *GetOrderInfoTx {
+	return &GetOrderInfoTx{c: c}
+}
+
+func (c *Client) NewGetCryptoAddressesTx() *GetCryptoAddressesTx {
+	return &GetCryptoAddressesTx{c: c}
+}
+
+func (c *Client) NewCryptoWithdrawTx() *CryptoWithdrawTx {
+	return &CryptoWithdrawTx{c: c}
+}
+
+// Internal withdraw is not supported yet due to lack of documentation. and can't tested cause of KYB.
+
+func (c *Client) NewGetCryptoDepositTx() *GetCryptoDepositTx {
+	return &GetCryptoDepositTx{c: c}
 }

@@ -6,26 +6,21 @@ import (
 
 	"github.com/bytedance/sonic"
 
+	"github.com/Maszz/go-bitkub-sdk/types"
 	BitkubTs "github.com/Maszz/go-bitkub-sdk/types"
 	"github.com/Maszz/go-bitkub-sdk/utils"
 
 	"github.com/valyala/fasthttp"
 )
 
-type WalletService struct {
-	c   *Client
-	any bool
+type GetWalletsTx struct {
+	c *Client
 }
 
-func (s *WalletService) Any(any bool) *WalletService {
-	s.any = any
-	return s
-}
-
-func (s *WalletService) Do(ctx context.Context) (res BitkubTs.WalletResponse, err error) {
+func (s *GetWalletsTx) Do(ctx context.Context) (res BitkubTs.WalletResponse, err error) {
 	r := &request{
 		method:   fasthttp.MethodPost,
-		endpoint: market_wallet_endpoint,
+		endpoint: types.MarketWalletEndpoint,
 		signed:   secTypeSigned,
 	}
 	/*
@@ -34,7 +29,7 @@ func (s *WalletService) Do(ctx context.Context) (res BitkubTs.WalletResponse, er
 	payload := BitkubTs.BalancesPayload{
 		Ts: utils.CurrentTimestamp(),
 	}
-	payload.Sig = s.c.signPayload(payload)
+	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
 	if err != nil {
 		return res, err
@@ -57,11 +52,11 @@ func (s *WalletService) Do(ctx context.Context) (res BitkubTs.WalletResponse, er
 	return res, nil
 }
 
-func (s *WalletService) DoAny(ctx context.Context) (res BitkubTs.WalletResponseAny, err error) {
+func (s *GetWalletsTx) DoAny(ctx context.Context) (res BitkubTs.WalletResponseAny, err error) {
 
 	r := &request{
 		method:   fasthttp.MethodPost,
-		endpoint: market_wallet_endpoint,
+		endpoint: types.MarketWalletEndpoint,
 		signed:   secTypeSigned,
 	}
 	/*
@@ -70,7 +65,7 @@ func (s *WalletService) DoAny(ctx context.Context) (res BitkubTs.WalletResponseA
 	payload := BitkubTs.BalancesPayload{
 		Ts: utils.CurrentTimestamp(),
 	}
-	payload.Sig = s.c.signPayload(payload)
+	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := json.Marshal(payload)
 	if err != nil {
 		return res, err
@@ -81,6 +76,10 @@ func (s *WalletService) DoAny(ctx context.Context) (res BitkubTs.WalletResponseA
 
 	if err != nil {
 		return res, err
+	}
+	respErr := s.c.catchApiError(data)
+	if respErr != nil {
+		return res, respErr
 	}
 
 	err = json.Unmarshal(data, &res)

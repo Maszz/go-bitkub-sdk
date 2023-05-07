@@ -5,33 +5,34 @@ import (
 	"fmt"
 
 	"github.com/Maszz/go-bitkub-sdk/types"
-
 	"github.com/bytedance/sonic"
 	"github.com/valyala/fasthttp"
 )
 
-type GetTradesTx struct {
+type GetOpenBooksTx struct {
 	c      *Client
 	symbol string
 	limit  int
 }
 
-func (s *GetTradesTx) Symbol(symbol string) *GetTradesTx {
+func (s *GetOpenBooksTx) Symbol(symbol string) *GetOpenBooksTx {
 	s.symbol = symbol
 	return s
 }
 
-func (s *GetTradesTx) Limit(limit int) *GetTradesTx {
+func (s *GetOpenBooksTx) Limit(limit int) *GetOpenBooksTx {
 	s.limit = limit
 	return s
 }
 
-func (s *GetTradesTx) Do(ctx context.Context) (res types.TradesResponse, err error) {
+func (s *GetOpenBooksTx) Do(ctx context.Context) (res types.OpenBooksResponse, err error) {
 	err = s.validate()
 	if err != nil {
 		return res, err
 	}
-	endpoint := types.MarketTradesEndpoint.String() + "?sym=" + s.symbol + "&lmt=" + fmt.Sprint(s.limit)
+
+	endpoint := types.MarketBooksEndpoint.String() + "?sym=" + s.symbol + "&lmt=" + fmt.Sprint(s.limit)
+
 	r := &request{
 		method:   fasthttp.MethodGet,
 		endpoint: types.NewEndPoint(endpoint),
@@ -41,6 +42,7 @@ func (s *GetTradesTx) Do(ctx context.Context) (res types.TradesResponse, err err
 	if err != nil {
 		return res, err
 	}
+
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
 		return res, respErr
@@ -54,7 +56,7 @@ func (s *GetTradesTx) Do(ctx context.Context) (res types.TradesResponse, err err
 
 }
 
-func (s *GetTradesTx) validate() error {
+func (s *GetOpenBooksTx) validate() error {
 	if s.limit <= 0 {
 		s.limit = 10
 	}

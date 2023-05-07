@@ -33,7 +33,7 @@ func (s *TestSignedService) Do(ctx context.Context) (res BitkubTs.BalancesRespon
 		// do hmac and sign payload + cal payload stuff.
 	*/
 	payload := TestSignedPayload{
-		Ts: utils.CurrentTimestamp(),
+		Ts: utils.RawCurrentTimestamp(),
 	}
 	payload.Sig = s.c.signPayload(payload)
 	byteBody, err := sonic.Marshal(payload)

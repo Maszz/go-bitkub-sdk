@@ -3,6 +3,7 @@ package bitkub
 import (
 	"fmt"
 
+	"github.com/Maszz/go-bitkub-sdk/types"
 	"github.com/valyala/fasthttp"
 )
 
@@ -16,7 +17,7 @@ const (
 
 type request struct {
 	method   string
-	endpoint string
+	endpoint types.EndPointType
 	body     []byte
 	query    fasthttp.Args
 	headers  *fasthttp.RequestHeader
