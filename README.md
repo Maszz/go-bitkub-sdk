@@ -3,10 +3,9 @@ A Golang sdk for bitkub api
 
 ## This Module is in initial development it not support majority of a api
 
-
 some modules behave differently from documentation. This makes it difficult to Test.
 Need Manualy call on every endpoint to test json responses it works correctly.
-Make sure you have read binance API document before continuing.
+Make sure you have read Bitkub API document before continuing.
 
 
 ## API List 
@@ -48,4 +47,5 @@ Post /api/market/v2/place-bid | Implemented
 Post /api/market/v2/place-ask | Implemented
 Post /api/market/v2/cancel-order | Implemented
 
+##
 
