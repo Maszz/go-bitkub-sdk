@@ -7,6 +7,24 @@ some modules behave differently from documentation. This makes it difficult to T
 Need Manualy call on every endpoint to test json responses it works correctly.
 Make sure you have read Bitkub API document before continuing.
 
+## Installation
+
+```shell
+go get github.com/Maszz/go-bitkub-sdk
+```
+updating a package 
+
+```shell
+go get -u github.com/Maszz/go-bitkub-sdk
+```
+
+### Importing
+
+```golang
+import (
+    "github.com/Maszz/go-bitkub-sdk"
+)
+```
 
 ## API List 
 
@@ -47,5 +65,8 @@ Post /api/market/v2/place-bid | Implemented
 Post /api/market/v2/place-ask | Implemented
 Post /api/market/v2/cancel-order | Implemented
 
-##
+## Documentation
+
+
+
 
