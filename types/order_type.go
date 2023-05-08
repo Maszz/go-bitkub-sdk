@@ -26,11 +26,11 @@ type GetOpenOrdersResponse struct {
 		Hash     string  `json:"hash"`
 		Side     string  `json:"side"`
 		Type     string  `json:"type"`
-		Rate     int     `json:"rate"`
+		Rate     float64 `json:"rate"`
 		Fee      float64 `json:"fee"`
 		Credit   float64 `json:"credit"`
 		Amount   float64 `json:"amount"`
-		Receive  int     `json:"receive                                                                                                                                                                                                "`
+		Receive  float64 `json:"receive                                                                                                                                                                                                "`
 		ParentID string  `json:"parent_id"`
 		SuperID  string  `json:"super_id"`
 		ClientID string  `json:"client_id"`
@@ -51,23 +51,23 @@ type GetOrderHistoryPayload struct {
 type GetOrderHistoryResponse struct {
 	Error  int `json:"error"`
 	Result []struct {
-		TxnID           string  `json:"txn_id"`
-		OrderID         string  `json:"order_id"`
-		Hash            string  `json:"hash"`
-		ParentOrderID   string  `json:"parent_order_id"`
-		ParentOrderHash string  `json:"parent_order_hash"`
-		SuperOrderID    string  `json:"super_order_id"`
-		SuperOrderHash  string  `json:"super_order_hash"`
-		TakenByMe       bool    `json:"taken_by_me"`
-		IsMaker         bool    `json:"is_maker"`
-		Side            string  `json:"side"`
-		Type            string  `json:"type"`
-		Rate            string  `json:"rate"`
-		Fee             string  `json:"fee"`
-		Credit          string  `json:"credit"`
-		Amount          float64 `json:"amount"`
-		Ts              int     `json:"ts"`
-		Date            string  `json:"date"`
+		TxnID           string `json:"txn_id"`
+		OrderID         string `json:"order_id"`
+		Hash            string `json:"hash"`
+		ParentOrderID   string `json:"parent_order_id"`
+		ParentOrderHash string `json:"parent_order_hash"`
+		SuperOrderID    string `json:"super_order_id"`
+		SuperOrderHash  string `json:"super_order_hash"`
+		TakenByMe       bool   `json:"taken_by_me"`
+		IsMaker         bool   `json:"is_maker"`
+		Side            string `json:"side"`
+		Type            string `json:"type"`
+		Rate            string `json:"rate"`
+		Fee             string `json:"fee"`
+		Credit          string `json:"credit"`
+		Amount          string `json:"amount"`
+		Ts              int    `json:"ts"`
+		Date            string `json:"date"`
 	} `json:"result"`
 	Pagination struct {
 		Page int `json:"page,omitempty"`
@@ -82,32 +82,36 @@ type GetOrdersInfoPayload struct {
 	Symbol    Symbol    `json:"sym"`
 	OrderID   OrderId   `json:"id"` // OrderId is a string in this case **
 	OrderSide OrderSide `json:"sd"`
-	OrderHash OrderHash `json:"hash"`
+	OrderHash OrderHash `json:"hash,omitempty"`
 }
 
 type GetOrdersInfoResponse struct {
 	Error  int `json:"error"`
 	Result struct {
-		ID            string  `json:"id"`
-		First         string  `json:"first"`
-		Parent        string  `json:"parent"`
-		Last          string  `json:"last"`
-		Amount        int     `json:"amount"`
-		Rate          int     `json:"rate"`
-		Fee           int     `json:"fee"`
-		Credit        int     `json:"credit"`
-		Filled        float64 `json:"filled"`
-		Total         int     `json:"total"`
-		Status        string  `json:"status"`
-		PartialFilled bool    `json:"partial_filled"`
-		Remaining     int     `json:"remaining"`
-		History       []struct {
-			Amount    float64 `json:"amount"`
-			Credit    float64 `json:"credit"`
+		Amount   int     `json:"amount"`
+		ClientID string  `json:"client_id"`
+		Credit   int     `json:"credit"`
+		Fee      float64 `json:"fee"`
+		Filled   int     `json:"filled"`
+		First    string  `json:"first"`
+		History  []struct {
+			Amount    int     `json:"amount"`
+			Credit    int     `json:"credit"`
 			Fee       float64 `json:"fee"`
+			Hash      string  `json:"hash"`
 			ID        string  `json:"id"`
 			Rate      int     `json:"rate"`
 			Timestamp int     `json:"timestamp"`
+			TxnID     string  `json:"txn_id"`
 		} `json:"history"`
+		ID            string  `json:"id"`
+		Last          string  `json:"last"`
+		Parent        string  `json:"parent"`
+		PartialFilled bool    `json:"partial_filled"`
+		Rate          float64 `json:"rate"`
+		Remaining     float64 `json:"remaining"`
+		Side          string  `json:"side"`
+		Status        string  `json:"status"`
+		Total         int     `json:"total"`
 	} `json:"result"`
 }

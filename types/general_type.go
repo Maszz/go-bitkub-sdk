@@ -31,8 +31,8 @@ const (
 	OrderTypeLimit  OrderType = "LIMIT"
 	OrderTypeMarket OrderType = "MARKET"
 
-	OrderSideBuy  OrderSide = "BUY"
-	OrderSideSell OrderSide = "SELL"
+	OrderSideBuy  OrderSide = "buy"
+	OrderSideSell OrderSide = "sell"
 
 	ERC20 BlockChainNetwork = "ETH"
 	BEP20 BlockChainNetwork = "BSC"

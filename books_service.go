@@ -11,11 +11,11 @@ import (
 
 type GetOpenBooksTx struct {
 	c      *Client
-	symbol string
+	symbol types.Symbol
 	limit  int
 }
 
-func (s *GetOpenBooksTx) Symbol(symbol string) *GetOpenBooksTx {
+func (s *GetOpenBooksTx) Symbol(symbol types.Symbol) *GetOpenBooksTx {
 	s.symbol = symbol
 	return s
 }
@@ -30,7 +30,7 @@ func (s *GetOpenBooksTx) Do(ctx context.Context) (res *types.OpenBooksResponse, 
 		return nil, err
 	}
 
-	endpoint := types.MarketBooksEndpoint.String() + "?sym=" + s.symbol + "&lmt=" + fmt.Sprint(s.limit)
+	endpoint := types.MarketBooksEndpoint.String() + "?sym=" + s.symbol.String() + "&lmt=" + fmt.Sprint(s.limit)
 
 	r := &request{
 		method:   fasthttp.MethodGet,

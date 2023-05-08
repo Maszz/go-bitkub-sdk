@@ -11,13 +11,13 @@ import (
 
 type GetTradingViewHistoryTx struct {
 	c          *Client
-	symbol     string
+	symbol     types.Symbol
 	from       int64
 	to         int64
 	resolution types.TimeResolution
 }
 
-func (s *GetTradingViewHistoryTx) Symbol(symbol string) *GetTradingViewHistoryTx {
+func (s *GetTradingViewHistoryTx) Symbol(symbol types.Symbol) *GetTradingViewHistoryTx {
 	s.symbol = symbol
 	return s
 }
@@ -32,7 +32,7 @@ func (s *GetTradingViewHistoryTx) ToTimestamp(to int64) *GetTradingViewHistoryTx
 	return s
 }
 
-func (s *GetTradingViewHistoryTx) ToCurrent(to int64) *GetTradingViewHistoryTx {
+func (s *GetTradingViewHistoryTx) ToCurrent() *GetTradingViewHistoryTx {
 	s.to = utils.RawCurrentTimestamp()
 	return s
 }
@@ -64,7 +64,7 @@ func (s *GetTradingViewHistoryTx) Do(ctx context.Context) (res *types.TradingVie
 		return nil, err
 	}
 
-	endpoint := types.TradingviewHistoryEndpoint.String() + "?symbol=" + s.symbol + "&resolution=" + s.resolution.String() + "&from=" + fmt.Sprint(s.from) + "&to=" + fmt.Sprint(s.to)
+	endpoint := types.TradingviewHistoryEndpoint.String() + "?symbol=" + s.symbol.String() + "&resolution=" + s.resolution.String() + "&from=" + fmt.Sprint(s.from) + "&to=" + fmt.Sprint(s.to)
 
 	r := &request{
 		method:   "GET",

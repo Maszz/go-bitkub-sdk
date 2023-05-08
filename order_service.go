@@ -306,7 +306,6 @@ func (s *GetOrderInfoTx) Do(ctx context.Context) (res *types.GetOrdersInfoRespon
 	}
 
 	payload := types.GetOrdersInfoPayload{
-
 		Ts:        utils.CurrentTimestamp(),
 		Symbol:    s.symbol,
 		OrderID:   s.order_id,

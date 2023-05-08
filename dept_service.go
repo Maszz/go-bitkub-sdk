@@ -11,11 +11,11 @@ import (
 
 type GetMarketDepthTx struct {
 	c      *Client
-	symbol string
+	symbol types.Symbol
 	limit  int
 }
 
-func (s *GetMarketDepthTx) Symbol(symbol string) *GetMarketDepthTx {
+func (s *GetMarketDepthTx) Symbol(symbol types.Symbol) *GetMarketDepthTx {
 	s.symbol = symbol
 	return s
 }
@@ -31,7 +31,7 @@ func (s *GetMarketDepthTx) Do(ctx context.Context) (res *types.MarketDepthRespon
 		return nil, err
 	}
 
-	endpoint := types.MarketDepthEndpoint.String() + "?sym=" + s.symbol + "&lmt=" + fmt.Sprint(s.limit)
+	endpoint := types.MarketDepthEndpoint.String() + "?sym=" + s.symbol.String() + "&lmt=" + fmt.Sprint(s.limit)
 
 	r := &request{
 		method:   fasthttp.MethodGet,

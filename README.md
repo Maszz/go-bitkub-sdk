@@ -30,40 +30,40 @@ import (
 
 Name  | Status
 ------------ | ------------ | 
-GET /api/status  | Implemented
-Get /api/servertime | Implemented
-Get /api/market/symbols | Implemented
-Get /api/market/ticker | Implemented
-Get /api/market/trades | Implemented
-Get /api/market/bids | Implemented
-Get /api/market/asks | Implemented
-Get /api/market/books | Implemented
-Get /api/market/depth | Implemented
-Get /tradingview/history | Implemented
-Post /api/market/wallet | Implemented
-Post /api/market/balances | Implemented
+GET /api/status  | Implemented(Tested)
+Get /api/servertime | Implemented(Tested)
+Get /api/market/symbols | Implemented(Tested)
+Get /api/market/ticker | Implemented(Tested)
+Get /api/market/trades | Implemented(Tested)
+Get /api/market/bids | Implemented(Tested)
+Get /api/market/asks | Implemented(Tested)
+Get /api/market/books | Implemented(Tested)
+Get /api/market/depth | Implemented(Tested)
+Get /tradingview/history | Implemented(Tested)
+Post /api/market/wallet | Implemented(Tested)
+Post /api/market/balances | Implemented(Tested)
 Post /api/market/place-bid | Not implemented(Depecated)
 Post /api/market/place-ask | Not implemented(Depecated)
 Post /api/market/place-ask-by-fiat | Not implemented(Depecated)
 Post /api/market/cancel-order | Not implemented(Depecated)
-Post /api/market/my-open-orders | Implemented
-Post /api/market/my-orders-history | Implemented
-Post /api/market/order-info | Implemented
-Post /api/crypto/addresses | Implemented
-Post /api/crypto/withdraw | Implemented
+Post /api/market/my-open-orders | Implemented(Tested)
+Post /api/market/my-orders-history | Implemented(Tested)
+Post /api/market/order-info | Implemented(Tested)
+Post /api/crypto/addresses | Implemented(Tested)
+Post /api/crypto/withdraw | Implemented(Tested)
 Post /api/crypto/deposit-history | Implemented(Tested)
 Post /api/crypto/withdraw-history | Implemented(Tested)
 Post /api/crypto/generate-address | Can't be implemented(Lack of document).
-Post /api/fiat/accounts | Implemented
+Post /api/fiat/accounts | Implemented(Tested)
 Post /api/fiat/withdraw | Implemented(Tested)
 Post /api/fiat/deposit-history | Implemented(Tested)
 Post /api/fiat/withdraw-history | Implemented(Tested)
 Post /api/market/wstoken | Implemented(Tested)
-Post /api/user/limits | Implemented
-Post /api/user/trading-credits | Implemented
-Post /api/market/v2/place-bid | Implemented
-Post /api/market/v2/place-ask | Implemented
-Post /api/market/v2/cancel-order | Implemented
+Post /api/user/limits | Implemented(Tested)
+Post /api/user/trading-credits | Implemented (Tested)
+Post /api/market/v2/place-bid | Implemented (Tested)
+Post /api/market/v2/place-ask | Implemented (Tested)
+Post /api/market/v2/cancel-order | Implemented (Tested)
 
 ## Documentation
 

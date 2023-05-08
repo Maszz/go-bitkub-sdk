@@ -70,11 +70,11 @@ func (s *GetBidsTx) validate() error {
 
 type GetAsksTx struct {
 	c      *Client
-	symbol string
+	symbol types.Symbol
 	limit  int
 }
 
-func (s *GetAsksTx) Symbol(symbol string) *GetAsksTx {
+func (s *GetAsksTx) Symbol(symbol types.Symbol) *GetAsksTx {
 	s.symbol = symbol
 	return s
 }
@@ -89,7 +89,7 @@ func (s *GetAsksTx) Do(ctx context.Context) (res *types.BidsAsksResponse, err er
 		return nil, err
 	}
 
-	endpoint := types.MarketAsksEndpoint.String() + "?sym=" + s.symbol + "&lmt=" + fmt.Sprint(s.limit)
+	endpoint := types.MarketAsksEndpoint.String() + "?sym=" + s.symbol.String() + "&lmt=" + fmt.Sprint(s.limit)
 
 	r := &request{
 		method:   fasthttp.MethodGet,
