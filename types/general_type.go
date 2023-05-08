@@ -33,10 +33,6 @@ const (
 
 	OrderSideBuy  OrderSide = "buy"
 	OrderSideSell OrderSide = "sell"
-
-	ERC20 BlockChainNetwork = "ETH"
-	BEP20 BlockChainNetwork = "BSC"
-	KAP20 BlockChainNetwork = "BKC"
 )
 
 const (

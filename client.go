@@ -152,6 +152,8 @@ func (c *Client) NewGetTradesTx() *GetTradesTx {
 	return &GetTradesTx{c: c}
 }
 
+// @param symbol string
+// @param limit int
 func (c *Client) NewGetBidsTx() *GetBidsTx {
 	return &GetBidsTx{c: c}
 }
@@ -208,16 +210,72 @@ func (c *Client) NewGetCryptoAddressesTx() *GetCryptoAddressesTx {
 	return &GetCryptoAddressesTx{c: c}
 }
 
+/*
+Function to Withdraw Crypto to specific address
+
+Paramiters Description:
+  - Address : Address of receiver
+  - Amount : Amount of crypto to withdraw
+  - Currency : Currency of crypto to withdraw
+  - Memo(Optional) : Memo of crypto to withdraw
+  - Network : Network of crypto to withdraw
+
+Paramiters Should be set before call Do() function:
+
+	func (*CryptoWithdrawTx) Address(address string)
+	func (*CryptoWithdrawTx) Amount(amount float64)
+	func (*CryptoWithdrawTx) Currency(cur string)
+	func (*CryptoWithdrawTx) Memo(memo string)
+	func (*CryptoWithdrawTx) Network(network types.BlockChainNetwork)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewCryptoWithdrawTx().Network(chains.BTC)
+	.Address("address").Amount(0.01).Currency("BTC").Do(context.Background())
+*/
 func (c *Client) NewCryptoWithdrawTx() *CryptoWithdrawTx {
 	return &CryptoWithdrawTx{c: c}
 }
 
-// Internal withdraw is not supported yet due to lack of documentation. and can't tested cause of KYB.
+/*
+Function to Get History Crypto Deposit Transaction
 
+Paramiters Description:
+  - Page : Page of result
+  - Limit : Limit of result
+
+Paramiters Should be set before call Do() function:
+
+	func (*GetCryptoDepositTx) Page(page int)
+	func (*GetCryptoDepositTx) Limit(limit int)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetCryptoDepositTx().Page(1).Limit(5).Do(context.Background())
+*/
 func (c *Client) NewGetCryptoDepositTx() *GetCryptoDepositTx {
 	return &GetCryptoDepositTx{c: c}
 }
 
+/*
+Function to Get History Crypto Withdraw Transaction
+
+Paramiters Description:
+  - Page : Page of result
+  - Limit : Limit of result
+
+Paramiters Should be set before call Do() function:
+
+	func (*GetCryptoWithdrawTx) Page(page int)
+	func (*GetCryptoWithdrawTx) Limit(limit int)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetCryptoWithdrawTx().Page(1).Limit(5).Do(context.Background())
+*/
 func (c *Client) NewGetCryptoWithdrawTx() *GetCryptoWithdrawTx {
 	return &GetCryptoWithdrawTx{c: c}
 }
