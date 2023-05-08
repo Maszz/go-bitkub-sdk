@@ -4,40 +4,40 @@ This documentation is in development may lack of information.
 
 # API List 
 
-*[GET /api/status](#get-endpoints-status)
-*[GET /api/servertime](#get-server-time) 
-*[GET /api/market/symbols](#list-all-symbols) 
-*[GET /api/market/ticker](#get-ticker-information) 
-*[GET /api/market/trades](#list-recent-trades) 
-*[GET /api/market/bids](#list-open-buy-orders) 
-*[GET /api/market/asks](#list-open-sell-orders) 
-*[GET /api/market/books](#list-all-open-orders) 
-*[GET /api/market/depth](#get-depth-information) 
-*[GET /tradingview/history](#get-historical-data-from-tradingview) 
-*POST /api/market/wallet 
-*POST /api/market/balances 
-*POST /api/market/place-bid 
-*POST /api/market/place-ask 
-*POST /api/market/place-ask-by-fiat 
-*POST /api/market/cancel-order 
-*POST /api/market/my-open-orders 
-*POST /api/market/my-orders-history 
-*POST /api/market/order-info 
-*POST /api/crypto/addresses 
-*POST /api/crypto/withdraw 
-*POST /api/crypto/deposit-history 
-*POST /api/crypto/withdraw-history 
-*POST /api/crypto/generate-address  
-*POST /api/fiat/accounts 
-*POST /api/fiat/withdraw 
-*POST /api/fiat/deposit-history 
-*POST /api/fiat/withdraw-history 
-*POST /api/market/wstoken 
-*POST /api/user/limits 
-*POST /api/user/trading-credits  
-*[POST /api/market/v2/place-bid](#create-asks-orders) 
-*POST /api/market/v2/place-ask  
-*POST /api/market/v2/cancel-order  
+- [GET /api/status](#get-endpoints-status)
+- [GET /api/servertime](#get-server-time) 
+- [GET /api/market/symbols](#list-all-symbols) 
+- [GET /api/market/ticker](#get-ticker-information) 
+- [GET /api/market/trades](#list-recent-trades) 
+- [GET /api/market/bids](#list-open-buy-orders) 
+- [GET /api/market/asks](#list-open-sell-orders) 
+- [GET /api/market/books](#list-all-open-orders) 
+- [GET /api/market/depth](#get-depth-information) 
+- [GET /tradingview/history](#get-historical-data-from-tradingview) 
+- POST /api/market/wallet 
+- POST /api/market/balances 
+- POST /api/market/place-bid 
+- POST /api/market/place-ask 
+- POST /api/market/place-ask-by-fiat 
+- POST /api/market/cancel-order 
+- POST /api/market/my-open-orders 
+- POST /api/market/my-orders-history 
+- POST /api/market/order-info 
+- POST /api/crypto/addresses 
+- POST /api/crypto/withdraw 
+- POST /api/crypto/deposit-history 
+- POST /api/crypto/withdraw-history 
+- POST /api/crypto/generate-address  
+- POST /api/fiat/accounts 
+- POST /api/fiat/withdraw 
+- POST /api/fiat/deposit-history 
+- POST /api/fiat/withdraw-history 
+- POST /api/market/wstoken 
+- POST /api/user/limits 
+- POST /api/user/trading-credits  
+- [POST /api/market/v2/place-bid](#create-asks-orders) 
+- POST /api/market/v2/place-ask  
+- POST /api/market/v2/cancel-order  
 
 # API documentation
 Example usage fir each endpoint
