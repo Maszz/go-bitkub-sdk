@@ -125,13 +125,6 @@ func (c *Client) catchApiError(data []byte) error {
 	return nil
 }
 
-// func (c *Client) NewTestService() *TestService {
-// 	return &TestService{c: c}
-// }
-// func (c *Client) NewTestSignedService() *TestSignedService {
-// 	return &TestSignedService{c: c}
-// }
-
 func (c *Client) NewGetStatusTx() *GetStatusTx {
 	return &GetStatusTx{c: c}
 }
