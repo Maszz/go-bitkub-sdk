@@ -30,16 +30,16 @@ import (
 
 Name  | Status
 ------------ | ------------ | 
-[GET /api/status](#get-endpoints-status)| Implemented(Tested)
-[GET /api/servertime](#get-server-time) | Implemented(Tested)
-[GET /api/market/symbols](#list-all-symbols) | Implemented(Tested)
-[GET /api/market/ticker](#get-ticker-information) | Implemented(Tested)
-[GET /api/market/trades](#list-recent-trades) | Implemented(Tested)
-[GET /api/market/bids](#list-open-buy-orders) | Implemented(Tested)
-[GET /api/market/asks](#list-open-sell-orders) | Implemented(Tested)
-[GET /api/market/books](#list-all-open-orders) | Implemented(Tested)
-[GET /api/market/depth](#get-depth-information) | Implemented(Tested)
-[GET /tradingview/history](#get-historical-data-from-tradingview) | Implemented(Tested)
+[GET /api/status] | Implemented(Tested)
+[GET /api/servertime] | Implemented(Tested)
+GET /api/market/symbols | Implemented(Tested)
+GET /api/market/ticker | Implemented(Tested)
+GET /api/market/trades | Implemented(Tested)
+GET /api/market/bids | Implemented(Tested)
+GET /api/market/asks| Implemented(Tested)
+GET /api/market/books | Implemented(Tested)
+GET /api/market/depth | Implemented(Tested)
+GET /tradingview/history | Implemented(Tested)
 POST /api/market/wallet | Implemented(Tested)
 POST /api/market/balances | Implemented(Tested)
 POST /api/market/place-bid | Not implemented(Depecated)
@@ -61,13 +61,12 @@ POST /api/fiat/withdraw-history | Implemented(Tested)
 POST /api/market/wstoken | Implemented(Tested)
 POST /api/user/limits | Implemented(Tested)
 POST /api/user/trading-credits | Implemented (Tested)
-[POST /api/market/v2/place-bid](#create-asks-orders) | Implemented (Tested)
+POST /api/market/v2/place-bid | Implemented (Tested)
 POST /api/market/v2/place-ask | Implemented (Tested)
 POST /api/market/v2/cancel-order | Implemented (Tested)
 
-## Documentation
 
-### Get started
+# Get started
 
 #### Setup
 
@@ -80,120 +79,9 @@ client := bitkub.NewClient("api_key", "api_secret")
 Simply call API in chain style. Call Do() in the end to send HTTP request.
 All responses return in go struct.
 
-### API Documentation
+>For more information about This library read the [documentation](api_document.md)
 
-#### Get Endpoints Status
-```golang
-res, err := client.NewGetStatusTx().Do(context.Background())
-if err != nil {
-		fmt.Println(err)
-		return
-	}
-jsonEnc, _ := json.Marshal(res)
-fmt.Println(string(jsonEnc))
-```
-
-#### Get Server time
-```golang
-res, err := client.NewGetServerTimeTx().Do(context.Background())
-if err != nil {
-		fmt.Println(err)
-		return
-	}
-jsonEnc, _ := json.Marshal(res)
-fmt.Println(string(jsonEnc))
-```
-
-#### List all symbols
-```golang
-res, err := client.NewGetSymbolsTx().Do(context.Background())
-if err != nil {
-		fmt.Println(err)
-		return
-	}
-jsonEnc, _ := json.Marshal(res)
-fmt.Println(string(jsonEnc))
-```
-
-#### Get ticker information
-```golang
-res, err := client.NewGetTickerTx().Do(context.Background())
-if err != nil {
-		fmt.Println(err)
-		return
-	}
-jsonEnc, _ := json.Marshal(res)
-fmt.Println(string(jsonEnc))
-```
-
-#### List recent trades
-```golang
-res, err := client.NewGetTradesTx().Symbol(symbols.THB_BTC).Limit(20).Do(context.Background())
-if err != nil {
-		fmt.Println(err)
-		return
-	}
-jsonEnc, _ := json.Marshal(res)
-fmt.Println(string(jsonEnc))
-```
-
-#### List open buy orders
-```golang
-res, err := client.NewGetBidsTx().Symbol(symbols.THB_BTC).Limit(20).Do(context.Background())
-if err != nil {
-		fmt.Println(err)
-		return
-	}
-jsonEnc, _ := json.Marshal(res)
-fmt.Println(string(jsonEnc))
-```
-
-#### List open sell orders
-```golang
-res, err := client.NewGetAsksTx().Symbol(symbols.THB_BTC).Limit(20).Do(context.Background())
-if err != nil {
-		fmt.Println(err)
-		return
-	}
-jsonEnc, _ := json.Marshal(res)
-fmt.Println(string(jsonEnc))
-```
-
-#### List all open orders
-```golang
-res, err := client.NewGetBooksTx().Symbol(symbols.THB_BTC).Limit(20).Do(context.Background())
-if err != nil {
-		fmt.Println(err)
-		return
-	}
-jsonEnc, _ := json.Marshal(res)
-fmt.Println(string(jsonEnc))
-```
-#### Get depth information
-```golang
-res, err := client.NewGetMarketDepthTx().Symbol(symbols.THB_BTC).Limit(20).Do(context.Background())
-if err != nil {
-		fmt.Println(err)
-		return
-	}
-jsonEnc, _ := json.Marshal(res)
-fmt.Println(string(jsonEnc))
-```
-
-
-#### Get historical data from tradingView
-```golang
-// ToCurrent is replicsent of time.Now(), But you can specify the time by using ToTimestamp() instead.
-res, err := client.NewGetTradingviewHistoryTx().Symbol(symbols.THB_BTC).FromTimestamp(1633424427).ToCurrent().Do(context.Background())
-if err != nil {
-		fmt.Println(err)
-		return
-	}
-jsonEnc, _ := json.Marshal(res)
-fmt.Println(string(jsonEnc))
-```
-
-#### Create Asks Orders
+#### Create Sell Order
 ```golang
 res, err := client.NewPlaceAskTx().Symbol(symbols.THB_BTC).Amount(0.001).OrderType(types.OrderTypeMarket).Do(context.Background())
 if err != nil {
@@ -202,8 +90,7 @@ if err != nil {
 	}
 jsonEnc, _ := json.Marshal(res)
 fmt.Println(string(jsonEnc))
-```
+``` 
 
-
-
-
+# Dependencies
+Instead of using net/http, this library uses fasthttp as its HTTP client and utilizes sonic for JSON serialization and deserialization. However, if you prefer not to use these libraries or if your application is affected by any edge cases, future versions of this library may include an adapter to support external libraries for serializing, deserializing, and making HTTP requests.
