@@ -1,12 +1,6 @@
 # go-bitkub-sdk
 A Golang sdk for bitkub api
 
-## This Module is in initial development it not support majority of a api
-
-some modules behave differently from documentation. This makes it difficult to Test.
-Need Manualy call on every endpoint to test json responses it works correctly.
-Make sure you have read Bitkub API document before continuing.
-
 ## Installation
 
 ```shell
@@ -68,7 +62,7 @@ POST /api/market/v2/cancel-order | Implemented (Tested)
 
 # Get started
 
-### Setup
+## Setup
 
 Init client for API services. 
 
@@ -81,7 +75,7 @@ All responses return in go struct.
 
 >For more information about This library read the [documentation](./api-docs.md)
 
-### Create Sell Order
+## Create Sell Order
 ```golang
 res, err := client.NewPlaceAskTx().Symbol(symbols.THB_BTC).Amount(0.001).OrderType(types.OrderTypeMarket).Do(context.Background())
 if err != nil {
