@@ -30,16 +30,16 @@ import (
 
 Name  | Status
 ------------ | ------------ | 
-GET /api/status  | Implemented(Tested)
-Get /api/servertime | Implemented(Tested)
-Get /api/market/symbols | Implemented(Tested)
-Get /api/market/ticker | Implemented(Tested)
-Get /api/market/trades | Implemented(Tested)
-Get /api/market/bids | Implemented(Tested)
-Get /api/market/asks | Implemented(Tested)
-Get /api/market/books | Implemented(Tested)
-Get /api/market/depth | Implemented(Tested)
-Get /tradingview/history | Implemented(Tested)
+[GET /api/status](#get-endpoints-status)| Implemented(Tested)
+[GET /api/servertime](#get-server-time) | Implemented(Tested)
+[GET /api/market/symbols](#list-all-symbols) | Implemented(Tested)
+[GET /api/market/ticker](#get-ticker-information) | Implemented(Tested)
+[GET /api/market/trades](#list-recent-trades) | Implemented(Tested)
+[GET /api/market/bids](#list-open-buy-orders) | Implemented(Tested)
+[GET /api/market/asks](#list-open-sell-orders) | Implemented(Tested)
+[GET /api/market/books](#list-all-open-orders) | Implemented(Tested)
+[GET /api/market/depth](#get-depth-information) | Implemented(Tested)
+[GET /tradingview/history](#get-historical-data-from-tradingview) | Implemented(Tested)
 Post /api/market/wallet | Implemented(Tested)
 Post /api/market/balances | Implemented(Tested)
 Post /api/market/place-bid | Not implemented(Depecated)
@@ -61,26 +61,30 @@ Post /api/fiat/withdraw-history | Implemented(Tested)
 Post /api/market/wstoken | Implemented(Tested)
 Post /api/user/limits | Implemented(Tested)
 Post /api/user/trading-credits | Implemented (Tested)
-Post /api/market/v2/place-bid | Implemented (Tested)
+[POST /api/market/v2/place-bid](#create-asks-orders) | Implemented (Tested)
 Post /api/market/v2/place-ask | Implemented (Tested)
 Post /api/market/v2/cancel-order | Implemented (Tested)
 
 ## Documentation
+
+### Get started
 
 #### Setup
 
 Init client for API services. 
 
 ```golang
-bitkubClient := bitkub.NewClient("api_key", "api_secret")
+client := bitkub.NewClient("api_key", "api_secret")
 ```
 
 Simply call API in chain style. Call Do() in the end to send HTTP request.
 All responses return in go struct.
 
-#### Create Asks Orders
+### API Documentation
+
+#### Get Endpoints Status
 ```golang
-res, err := bitkubClient.NewPlaceAskTx().Symbol(symbols.THB_BTC).Amount(0.001).OrderType(types.OrderTypeMarket).Do(context.Background())
+res, err := client.NewGetStatusTx().Do(context.Background())
 if err != nil {
 		fmt.Println(err)
 		return
@@ -89,6 +93,116 @@ jsonEnc, _ := json.Marshal(res)
 fmt.Println(string(jsonEnc))
 ```
 
+#### Get Server time
+```golang
+res, err := client.NewGetServerTimeTx().Do(context.Background())
+if err != nil {
+		fmt.Println(err)
+		return
+	}
+jsonEnc, _ := json.Marshal(res)
+fmt.Println(string(jsonEnc))
+```
+
+#### List all symbols
+```golang
+res, err := client.NewGetSymbolsTx().Do(context.Background())
+if err != nil {
+		fmt.Println(err)
+		return
+	}
+jsonEnc, _ := json.Marshal(res)
+fmt.Println(string(jsonEnc))
+```
+
+#### Get ticker information
+```golang
+res, err := client.NewGetTickerTx().Do(context.Background())
+if err != nil {
+		fmt.Println(err)
+		return
+	}
+jsonEnc, _ := json.Marshal(res)
+fmt.Println(string(jsonEnc))
+```
+
+#### List recent trades
+```golang
+res, err := client.NewGetTradesTx().Symbol(symbols.THB_BTC).Limit(20).Do(context.Background())
+if err != nil {
+		fmt.Println(err)
+		return
+	}
+jsonEnc, _ := json.Marshal(res)
+fmt.Println(string(jsonEnc))
+```
+
+#### List open buy orders
+```golang
+res, err := client.NewGetBidsTx().Symbol(symbols.THB_BTC).Limit(20).Do(context.Background())
+if err != nil {
+		fmt.Println(err)
+		return
+	}
+jsonEnc, _ := json.Marshal(res)
+fmt.Println(string(jsonEnc))
+```
+
+#### List open sell orders
+```golang
+res, err := client.NewGetAsksTx().Symbol(symbols.THB_BTC).Limit(20).Do(context.Background())
+if err != nil {
+		fmt.Println(err)
+		return
+	}
+jsonEnc, _ := json.Marshal(res)
+fmt.Println(string(jsonEnc))
+```
+
+#### List all open orders
+```golang
+res, err := client.NewGetBooksTx().Symbol(symbols.THB_BTC).Limit(20).Do(context.Background())
+if err != nil {
+		fmt.Println(err)
+		return
+	}
+jsonEnc, _ := json.Marshal(res)
+fmt.Println(string(jsonEnc))
+```
+#### Get depth information
+```golang
+res, err := client.NewGetMarketDepthTx().Symbol(symbols.THB_BTC).Limit(20).Do(context.Background())
+if err != nil {
+		fmt.Println(err)
+		return
+	}
+jsonEnc, _ := json.Marshal(res)
+fmt.Println(string(jsonEnc))
+```
+
+
+#### Get historical data from tradingView
+```golang
+// ToCurrent is replicsent of time.Now(), But you can specify the time by using ToTimestamp() instead.
+res, err := client.NewGetTradingviewHistoryTx().Symbol(symbols.THB_BTC).FromTimestamp(1633424427).ToCurrent().Do(context.Background())
+if err != nil {
+		fmt.Println(err)
+		return
+	}
+jsonEnc, _ := json.Marshal(res)
+fmt.Println(string(jsonEnc))
+```
+
+#### Create Asks Orders
+```golang
+res, err := client.NewPlaceAskTx().Symbol(symbols.THB_BTC).Amount(0.001).OrderType(types.OrderTypeMarket).Do(context.Background())
+if err != nil {
+		fmt.Println(err)
+		return
+	}
+jsonEnc, _ := json.Marshal(res)
+fmt.Println(string(jsonEnc))
+```
 
 
 
