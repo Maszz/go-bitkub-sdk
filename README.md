@@ -30,8 +30,8 @@ import (
 
 Name  | Status
 ------------ | ------------ | 
-[GET /api/status] | Implemented(Tested)
-[GET /api/servertime] | Implemented(Tested)
+GET /api/status | Implemented(Tested)
+GET /api/servertime | Implemented(Tested)
 GET /api/market/symbols | Implemented(Tested)
 GET /api/market/ticker | Implemented(Tested)
 GET /api/market/trades | Implemented(Tested)
