@@ -68,7 +68,7 @@ POST /api/market/v2/cancel-order | Implemented (Tested)
 
 # Get started
 
-#### Setup
+### Setup
 
 Init client for API services. 
 
@@ -79,9 +79,9 @@ client := bitkub.NewClient("api_key", "api_secret")
 Simply call API in chain style. Call Do() in the end to send HTTP request.
 All responses return in go struct.
 
->For more information about This library read the [documentation](api_document.md)
+>For more information about This library read the [documentation](api_doc.md)
 
-#### Create Sell Order
+### Create Sell Order
 ```golang
 res, err := client.NewPlaceAskTx().Symbol(symbols.THB_BTC).Amount(0.001).OrderType(types.OrderTypeMarket).Do(context.Background())
 if err != nil {
