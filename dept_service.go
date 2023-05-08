@@ -25,11 +25,10 @@ func (s *GetMarketDepthTx) Limit(limit int) *GetMarketDepthTx {
 	return s
 }
 
-func (s *GetMarketDepthTx) Do(ctx context.Context) (res types.MarketDepthResponse, err error) {
+func (s *GetMarketDepthTx) Do(ctx context.Context) (res *types.MarketDepthResponse, err error) {
 
-	err = s.validate()
-	if err != nil {
-		return res, err
+	if err = s.validate(); err != nil {
+		return nil, err
 	}
 
 	endpoint := types.MarketDepthEndpoint.String() + "?sym=" + s.symbol + "&lmt=" + fmt.Sprint(s.limit)
@@ -41,11 +40,12 @@ func (s *GetMarketDepthTx) Do(ctx context.Context) (res types.MarketDepthRespons
 	}
 	data, err := s.c.callAPI(ctx, r)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.MarketDepthResponse)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	return res, nil

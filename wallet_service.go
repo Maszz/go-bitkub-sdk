@@ -16,7 +16,7 @@ type GetWalletsTx struct {
 	c *Client
 }
 
-func (s *GetWalletsTx) Do(ctx context.Context) (res types.WalletResponse, err error) {
+func (s *GetWalletsTx) Do(ctx context.Context) (res *types.WalletResponse, err error) {
 	r := &request{
 		method:   fasthttp.MethodPost,
 		endpoint: types.MarketWalletEndpoint,
@@ -31,27 +31,25 @@ func (s *GetWalletsTx) Do(ctx context.Context) (res types.WalletResponse, err er
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	r.body = byteBody
 	data, err := s.c.callAPI(ctx, r)
 
 	if err != nil {
-		return res, err
+		return nil, err
 	}
-
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.WalletResponse)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
-
-	// setparmas stuff.
 
 	return res, nil
 }
 
-func (s *GetWalletsTx) DoAny(ctx context.Context) (res types.WalletResponseAny, err error) {
+func (s *GetWalletsTx) DoAny(ctx context.Context) (res *types.WalletResponseAny, err error) {
 
 	r := &request{
 		method:   fasthttp.MethodPost,
@@ -67,26 +65,23 @@ func (s *GetWalletsTx) DoAny(ctx context.Context) (res types.WalletResponseAny, 
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := json.Marshal(payload)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	r.body = byteBody
 	data, err := s.c.callAPI(ctx, r)
 
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
-		return res, respErr
+		return nil, respErr
 	}
-
-	err = json.Unmarshal(data, &res)
+	res = new(types.WalletResponseAny)
+	err = json.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
-
-	// setparmas stuff.
-
 	return res, nil
 }

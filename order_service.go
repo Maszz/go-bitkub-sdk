@@ -45,11 +45,10 @@ func (s *CancelOrderTx) OrderHash(order_hash types.OrderHash) *CancelOrderTx {
 	return s
 }
 
-func (s *CancelOrderTx) Do(ctx context.Context) (res types.CancelOrderResponse, err error) {
+func (s *CancelOrderTx) Do(ctx context.Context) (res *types.CancelOrderResponse, err error) {
 
-	err = s.validate()
-	if err != nil {
-		return res, err
+	if err = s.validate(); err != nil {
+		return nil, err
 	}
 
 	r := &request{
@@ -69,22 +68,22 @@ func (s *CancelOrderTx) Do(ctx context.Context) (res types.CancelOrderResponse, 
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	r.body = byteBody
 	data, err := s.c.callAPI(ctx, r)
 
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
-		return res, respErr
+		return nil, respErr
 	}
-
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.CancelOrderResponse)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	return res, nil
@@ -118,10 +117,9 @@ func (s *GetOpenOrdersTx) Symbol(symbol types.Symbol) *GetOpenOrdersTx {
 	return s
 }
 
-func (s *GetOpenOrdersTx) Do(ctx context.Context) (res types.GetOpenOrdersResponse, err error) {
-	err = s.validate()
-	if err != nil {
-		return res, err
+func (s *GetOpenOrdersTx) Do(ctx context.Context) (res *types.GetOpenOrdersResponse, err error) {
+	if err = s.validate(); err != nil {
+		return nil, err
 	}
 
 	r := &request{
@@ -137,22 +135,21 @@ func (s *GetOpenOrdersTx) Do(ctx context.Context) (res types.GetOpenOrdersRespon
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	r.body = byteBody
 	data, err := s.c.callAPI(ctx, r)
-
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
-		return res, respErr
+		return nil, respErr
 	}
-
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.GetOpenOrdersResponse)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	return res, nil
@@ -200,10 +197,9 @@ func (s *GetOrderHistoryTx) End(end types.Timestamp) *GetOrderHistoryTx {
 	return s
 }
 
-func (s *GetOrderHistoryTx) Do(ctx context.Context) (res types.GetOrderHistoryResponse, err error) {
-	err = s.validate()
-	if err != nil {
-		return res, err
+func (s *GetOrderHistoryTx) Do(ctx context.Context) (res *types.GetOrderHistoryResponse, err error) {
+	if err = s.validate(); err != nil {
+		return nil, err
 	}
 
 	r := &request{
@@ -223,21 +219,22 @@ func (s *GetOrderHistoryTx) Do(ctx context.Context) (res types.GetOrderHistoryRe
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	r.body = byteBody
 	data, err := s.c.callAPI(ctx, r)
 
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
-		return res, respErr
+		return nil, respErr
 	}
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.GetOrderHistoryResponse)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	return res, nil
@@ -297,10 +294,9 @@ func (s *GetOrderInfoTx) OrderHash(order_hash types.OrderHash) *GetOrderInfoTx {
 	return s
 }
 
-func (s *GetOrderInfoTx) Do(ctx context.Context) (res types.GetOrdersInfoResponse, err error) {
-	err = s.validate()
-	if err != nil {
-		return res, err
+func (s *GetOrderInfoTx) Do(ctx context.Context) (res *types.GetOrdersInfoResponse, err error) {
+	if err = s.validate(); err != nil {
+		return nil, err
 	}
 
 	r := &request{
@@ -320,22 +316,22 @@ func (s *GetOrderInfoTx) Do(ctx context.Context) (res types.GetOrdersInfoRespons
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	r.body = byteBody
 	data, err := s.c.callAPI(ctx, r)
 
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
-		return res, respErr
+		return nil, respErr
 	}
-
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.GetOrdersInfoResponse)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	return res, nil

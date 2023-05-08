@@ -28,10 +28,9 @@ func (s *GetCryptoAddressesTx) Limit(limit int) *GetCryptoAddressesTx {
 	return s
 }
 
-func (s *GetCryptoAddressesTx) Do(ctx context.Context) (res types.CryptoAddressesResponse, err error) {
-	err = s.validate()
-	if err != nil {
-		return res, err
+func (s *GetCryptoAddressesTx) Do(ctx context.Context) (res *types.CryptoAddressesResponse, err error) {
+	if err = s.validate(); err != nil {
+		return nil, err
 	}
 
 	endpoint := s.urlBuilder()
@@ -48,29 +47,29 @@ func (s *GetCryptoAddressesTx) Do(ctx context.Context) (res types.CryptoAddresse
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	r.body = byteBody
 	data, err := s.c.callAPI(ctx, r)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
-		return res, respErr
+		return nil, respErr
 	}
-
+	res = new(types.CryptoAddressesResponse)
 	if s.hasAllQuery {
-		err = s.tranformHasAllQueryResponse(data, &res)
+		err = s.tranformHasAllQueryResponse(data, res)
 		if err != nil {
-			return res, err
+			return nil, err
 		}
 		return res, nil
 	}
 
-	err = sonic.Unmarshal(data, &res)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	return res, nil
@@ -108,8 +107,8 @@ func (s *GetCryptoAddressesTx) urlBuilder() string {
 }
 
 func (s *GetCryptoAddressesTx) tranformHasAllQueryResponse(data []byte, res *types.CryptoAddressesResponse) (err error) {
-	resWithAllQuery := types.CryptoAddressesResponseWithAllQuery{}
-	err = sonic.Unmarshal(data, &resWithAllQuery)
+	resWithAllQuery := &types.CryptoAddressesResponseWithAllQuery{}
+	err = sonic.Unmarshal(data, resWithAllQuery)
 	if err != nil {
 		return err
 	}
@@ -165,11 +164,10 @@ func (s *CryptoWithdrawTx) Network(network types.BlockChainNetwork) *CryptoWithd
 	return s
 }
 
-func (s *CryptoWithdrawTx) Do(ctx context.Context) (res types.CryptoWithdrawResponse, err error) {
+func (s *CryptoWithdrawTx) Do(ctx context.Context) (res *types.CryptoWithdrawResponse, err error) {
 
-	err = s.validate()
-	if err != nil {
-		return res, err
+	if err = s.validate(); err != nil {
+		return nil, err
 	}
 
 	r := &request{
@@ -190,22 +188,22 @@ func (s *CryptoWithdrawTx) Do(ctx context.Context) (res types.CryptoWithdrawResp
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	r.body = byteBody
 	data, err := s.c.callAPI(ctx, r)
 
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
-		return res, respErr
+		return nil, respErr
 	}
-
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.CryptoWithdrawResponse)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	return res, nil
@@ -244,10 +242,9 @@ func (s *GetCryptoDepositTx) Limit(limit int) *GetCryptoDepositTx {
 	return s
 }
 
-func (s *GetCryptoDepositTx) Do(ctx context.Context) (res types.CryptoDepositResponse, err error) {
-	err = s.validate()
-	if err != nil {
-		return res, err
+func (s *GetCryptoDepositTx) Do(ctx context.Context) (res *types.CryptoDepositResponse, err error) {
+	if err = s.validate(); err != nil {
+		return nil, err
 	}
 
 	endpoint := s.urlBuilder()
@@ -264,21 +261,21 @@ func (s *GetCryptoDepositTx) Do(ctx context.Context) (res types.CryptoDepositRes
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	r.body = byteBody
 	data, err := s.c.callAPI(ctx, r)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
-		return res, respErr
+		return nil, respErr
 	}
-
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.CryptoDepositResponse)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	return res, nil

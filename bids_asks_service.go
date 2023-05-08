@@ -28,11 +28,10 @@ func (s *GetBidsTx) Limit(limit int) *GetBidsTx {
 	return s
 }
 
-func (s *GetBidsTx) Do(ctx context.Context) (res types.BidsAsksResponse, err error) {
+func (s *GetBidsTx) Do(ctx context.Context) (res *types.BidsAsksResponse, err error) {
 
-	err = s.validate()
-	if err != nil {
-		return res, err
+	if err = s.validate(); err != nil {
+		return nil, err
 	}
 
 	endpoint := types.MarketBidsEndpoint.String() + "?sym=" + s.symbol.String() + "&lmt=" + fmt.Sprint(s.limit)
@@ -44,15 +43,16 @@ func (s *GetBidsTx) Do(ctx context.Context) (res types.BidsAsksResponse, err err
 	}
 	data, err := s.c.callAPI(ctx, r)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
-		return res, respErr
+		return nil, respErr
 	}
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.BidsAsksResponse)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	return res, nil
@@ -84,10 +84,9 @@ func (s *GetAsksTx) Limit(limit int) *GetAsksTx {
 	return s
 }
 
-func (s *GetAsksTx) Do(ctx context.Context) (res types.BidsAsksResponse, err error) {
-	err = s.validate()
-	if err != nil {
-		return res, err
+func (s *GetAsksTx) Do(ctx context.Context) (res *types.BidsAsksResponse, err error) {
+	if err = s.validate(); err != nil {
+		return nil, err
 	}
 
 	endpoint := types.MarketAsksEndpoint.String() + "?sym=" + s.symbol + "&lmt=" + fmt.Sprint(s.limit)
@@ -99,16 +98,16 @@ func (s *GetAsksTx) Do(ctx context.Context) (res types.BidsAsksResponse, err err
 	}
 	data, err := s.c.callAPI(ctx, r)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
-		return res, respErr
+		return nil, respErr
 	}
-
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.BidsAsksResponse)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	return res, nil
@@ -160,10 +159,10 @@ func (s *PlaceBidTx) ClientID(client_id string) *PlaceBidTx {
 	return s
 }
 
-func (s *PlaceBidTx) Do(ctx context.Context) (res types.PlaceBidAskResponse, err error) {
+func (s *PlaceBidTx) Do(ctx context.Context) (res *types.PlaceBidAskResponse, err error) {
 
 	if err = s.validate(); err != nil {
-		return res, err
+		return nil, err
 	}
 
 	r := &request{
@@ -184,23 +183,23 @@ func (s *PlaceBidTx) Do(ctx context.Context) (res types.PlaceBidAskResponse, err
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	r.body = byteBody
 	data, err := s.c.callAPI(ctx, r)
 
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
-		return res, respErr
+		return nil, respErr
 	}
-
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.PlaceBidAskResponse)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	return res, nil
@@ -257,10 +256,9 @@ func (s *PlaceAskTx) ClientID(client_id string) *PlaceAskTx {
 	return s
 }
 
-func (s *PlaceAskTx) Do(ctx context.Context) (res types.PlaceBidAskResponse, err error) {
-	err = s.validate()
-	if err != nil {
-		return res, err
+func (s *PlaceAskTx) Do(ctx context.Context) (res *types.PlaceBidAskResponse, err error) {
+	if err = s.validate(); err != nil {
+		return nil, err
 	}
 
 	r := &request{
@@ -280,23 +278,23 @@ func (s *PlaceAskTx) Do(ctx context.Context) (res types.PlaceBidAskResponse, err
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	r.body = byteBody
 	data, err := s.c.callAPI(ctx, r)
 
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
-		return res, respErr
+		return nil, respErr
 	}
-
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.PlaceBidAskResponse)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	return res, nil

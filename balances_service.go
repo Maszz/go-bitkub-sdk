@@ -15,7 +15,7 @@ type GetBalancesTx struct {
 	c *Client
 }
 
-func (s *GetBalancesTx) Do(ctx context.Context) (res types.BalancesResponse, err error) {
+func (s *GetBalancesTx) Do(ctx context.Context) (res *types.BalancesResponse, err error) {
 	r := &request{
 		method:   fasthttp.MethodPost,
 		endpoint: types.MarketBalancesEndpoint,
@@ -30,30 +30,29 @@ func (s *GetBalancesTx) Do(ctx context.Context) (res types.BalancesResponse, err
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	r.body = byteBody
 	data, err := s.c.callAPI(ctx, r)
 
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
-		return res, respErr
+		return nil, respErr
 	}
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.BalancesResponse)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
-
-	// setparmas stuff.
 
 	return res, nil
 }
 
-func (s *GetBalancesTx) DoAny(ctx context.Context) (res types.BalancesResponseAny, err error) {
+func (s *GetBalancesTx) DoAny(ctx context.Context) (res *types.BalancesResponseAny, err error) {
 	r := &request{
 		method:   fasthttp.MethodPost,
 		endpoint: types.MarketBalancesEndpoint,
@@ -68,26 +67,24 @@ func (s *GetBalancesTx) DoAny(ctx context.Context) (res types.BalancesResponseAn
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	r.body = byteBody
 	data, err := s.c.callAPI(ctx, r)
 
 	if err != nil {
-		return types.BalancesResponseAny{}, err
+		return nil, err
 	}
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
 		return res, respErr
 	}
-	// resp := BitkubTs.BalancesResponseAny{}
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.BalancesResponseAny)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
-
-	// setparmas stuff.
 
 	return res, nil
 }

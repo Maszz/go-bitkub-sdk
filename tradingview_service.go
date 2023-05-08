@@ -58,11 +58,10 @@ func (s *GetTradingViewHistoryTx) Resolution(resolution types.TimeResolution) *G
 	return s
 }
 
-func (s *GetTradingViewHistoryTx) Do(ctx context.Context) (res types.TradingViewHistoryResponse, err error) {
+func (s *GetTradingViewHistoryTx) Do(ctx context.Context) (res *types.TradingViewHistoryResponse, err error) {
 
-	err = s.validate()
-	if err != nil {
-		return res, err
+	if err = s.validate(); err != nil {
+		return nil, err
 	}
 
 	endpoint := types.TradingviewHistoryEndpoint.String() + "?symbol=" + s.symbol + "&resolution=" + s.resolution.String() + "&from=" + fmt.Sprint(s.from) + "&to=" + fmt.Sprint(s.to)
@@ -75,11 +74,12 @@ func (s *GetTradingViewHistoryTx) Do(ctx context.Context) (res types.TradingView
 
 	data, err := s.c.callAPI(ctx, r)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.TradingViewHistoryResponse)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	return res, nil
 }

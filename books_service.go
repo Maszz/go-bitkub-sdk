@@ -25,10 +25,9 @@ func (s *GetOpenBooksTx) Limit(limit int) *GetOpenBooksTx {
 	return s
 }
 
-func (s *GetOpenBooksTx) Do(ctx context.Context) (res types.OpenBooksResponse, err error) {
-	err = s.validate()
-	if err != nil {
-		return res, err
+func (s *GetOpenBooksTx) Do(ctx context.Context) (res *types.OpenBooksResponse, err error) {
+	if err = s.validate(); err != nil {
+		return nil, err
 	}
 
 	endpoint := types.MarketBooksEndpoint.String() + "?sym=" + s.symbol + "&lmt=" + fmt.Sprint(s.limit)
@@ -40,16 +39,17 @@ func (s *GetOpenBooksTx) Do(ctx context.Context) (res types.OpenBooksResponse, e
 	}
 	data, err := s.c.callAPI(ctx, r)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	respErr := s.c.catchApiError(data)
 	if respErr != nil {
-		return res, respErr
+		return nil, respErr
 	}
-	err = sonic.Unmarshal(data, &res)
+	res = new(types.OpenBooksResponse)
+	err = sonic.Unmarshal(data, res)
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 
 	return res, nil

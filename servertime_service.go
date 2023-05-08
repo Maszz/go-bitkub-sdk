@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 
 	"github.com/Maszz/go-bitkub-sdk/types"
-	"github.com/bytedance/sonic"
 
 	"github.com/valyala/fasthttp"
 )
@@ -14,7 +13,7 @@ type GetServerTimeTx struct {
 	c *Client
 }
 
-func (s *GetServerTimeTx) Do(ctx context.Context) (res uint64, err error) {
+func (s *GetServerTimeTx) Do(ctx context.Context) (res *uint64, err error) {
 	r := &request{
 		method:   fasthttp.MethodGet,
 		endpoint: types.ServertimeEndpoint,
@@ -22,13 +21,10 @@ func (s *GetServerTimeTx) Do(ctx context.Context) (res uint64, err error) {
 	}
 	data, err := s.c.callAPI(ctx, r)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 	resp := binary.BigEndian.Uint64(data)
-	err = sonic.Unmarshal(data, &resp)
-	if err != nil {
-		return 0, err
-	}
+	res = &resp
 
-	return resp, nil
+	return res, nil
 }
