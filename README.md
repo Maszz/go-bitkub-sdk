@@ -79,7 +79,7 @@ client := bitkub.NewClient("api_key", "api_secret")
 Simply call API in chain style. Call Do() in the end to send HTTP request.
 All responses return in go struct.
 
->For more information about This library read the [documentation](/api_doc.md)
+>For more information about This library read the [documentation](./api_doc.md)
 
 ### Create Sell Order
 ```golang
