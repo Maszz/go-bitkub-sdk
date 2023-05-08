@@ -74,19 +74,22 @@ type CryptoInternalWidthdrawPayload struct {
 	Memo    string    `json:"mem,omitempty"`
 }
 
-type CryptoDepositResponse struct {
+type GetCryptoDepositPayload struct {
+	Ts  Timestamp `json:"ts,omitempty"`
+	Sig Signature `json:"sig,omitempty"`
+}
+
+type GetCryptoDepositResponse struct {
 	Error  int `json:"error"`
 	Result []struct {
-		Hash          string  `json:"hash"`
-		Currency      string  `json:"currency"`
-		Amount        float64 `json:"amount"`
-		FromAddress   string  `json:"from_address"`
-		ToAddress     string  `json:"to_address"`
-		Confirmations int     `json:"confirmations"`
-		Status        string  `json:"status"`
-		Time          int     `json:"time"`
-		Address       string  `json:"address"`
-		Note          string  `json:"note"`
+		Hash          string      `json:"hash"`
+		Currency      string      `json:"currency"`
+		Amount        float64     `json:"amount"`
+		Address       interface{} `json:"address"`
+		Confirmations int         `json:"confirmations"`
+		Status        string      `json:"status"`
+		Note          interface{} `json:"note"`
+		Time          int         `json:"time"`
 	} `json:"result"`
 	Pagination struct {
 		Page int `json:"page,omitempty"`
@@ -96,7 +99,42 @@ type CryptoDepositResponse struct {
 	} `json:"pagination"`
 }
 
-type CryptoDepositPayload struct {
+type GetCryptoWithdrawPayload struct {
 	Ts  Timestamp `json:"ts,omitempty"`
 	Sig Signature `json:"sig,omitempty"`
+}
+
+type GetCryptoWithdrawResponse struct {
+	Error  int `json:"error"`
+	Result []struct {
+		TxnID    string  `json:"txn_id"`
+		Hash     string  `json:"hash"`
+		Currency string  `json:"currency"`
+		Amount   string  `json:"amount"`
+		Fee      float64 `json:"fee"`
+		Address  string  `json:"address"`
+		Memo     string  `json:"memo"`
+		Status   string  `json:"status"`
+		Note     string  `json:"note"`
+		Time     int     `json:"time"`
+	} `json:"result"`
+	Pagination struct {
+		Page int `json:"page,omitempty"`
+		Last int `json:"last"`
+		Next int `json:"next"`
+		Prev int `json:"prev"`
+	} `json:"pagination"`
+}
+type CryptoGenerateAddressPayload struct {
+	Ts     Timestamp `json:"ts,omitempty"`
+	Sig    Signature `json:"sig,omitempty"`
+	Symbol Symbol    `json:"sym,omitempty"`
+}
+type CryptoGenerateAddressResponse struct {
+	Error  int `json:"error"`
+	Result []struct {
+		Currency string `json:"currency"`
+		Address  string `json:"address"`
+		Memo     string `json:"memo"`
+	} `json:"result"`
 }

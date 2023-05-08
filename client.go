@@ -217,3 +217,40 @@ func (c *Client) NewCryptoWithdrawTx() *CryptoWithdrawTx {
 func (c *Client) NewGetCryptoDepositTx() *GetCryptoDepositTx {
 	return &GetCryptoDepositTx{c: c}
 }
+
+func (c *Client) NewGetCryptoWithdrawTx() *GetCryptoWithdrawTx {
+	return &GetCryptoWithdrawTx{c: c}
+}
+
+func (c *Client) NewGetFiatAccountsTx() *GetFiatAccountsTx {
+	return &GetFiatAccountsTx{c: c}
+}
+
+func (c *Client) NewFiatWithdrawTx() *FiatWithdrawTx {
+	return &FiatWithdrawTx{c: c}
+}
+
+func (c *Client) NewGetFiatDepositsTx() *GetFiatDepositsTx {
+	return &GetFiatDepositsTx{c: c}
+}
+
+func (c *Client) NewGetFiatWithdralsTx() *GetFiatWithdrawsTx {
+	return &GetFiatWithdrawsTx{c: c}
+}
+
+func (c *Client) NewGetUserLimitsTx() *GetUserLimitsTx {
+	return &GetUserLimitsTx{c: c}
+}
+
+func (c *Client) NewGetTradingCreditsTx() *GetTradingCreditsTx {
+	return &GetTradingCreditsTx{c: c}
+}
+
+func (c *Client) NewGetWsTokenTx() *GetWsTokenTx {
+	return &GetWsTokenTx{c: c}
+}
+
+// Not usable due to lack of documentation
+// func (c *Client) NewCryptoGenerateAddressTx() *CryptoGenerateAddressTx {
+// 	return &CryptoGenerateAddressTx{c: c}
+// }

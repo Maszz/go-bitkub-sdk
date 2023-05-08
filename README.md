@@ -51,16 +51,16 @@ Post /api/market/my-orders-history | Implemented
 Post /api/market/order-info | Implemented
 Post /api/crypto/addresses | Implemented
 Post /api/crypto/withdraw | Implemented
-Post /api/crypto/deposit-history | Implemented
-Post /api/crypto/withdraw-history | Implemented
-Post /api/crypto/generate-address | Not Implemented
-Post /api/fiat/accounts | Not Implemented
-Post /api/fiat/withdraw | Not Implemented
-Post /api/fiat/deposit-history | Not implemented
-Post /api/fiat/withdraw-history | Not implemented
-Post /api/market/wstoken | Not Implemented
-Post /api/user/limits | Not Implemented
-Post /api/user/trading-credits | Not Implemented
+Post /api/crypto/deposit-history | Implemented(Tested)
+Post /api/crypto/withdraw-history | Implemented(Tested)
+Post /api/crypto/generate-address | Can't be implemented(Lack of document).
+Post /api/fiat/accounts | Implemented
+Post /api/fiat/withdraw | Implemented(Tested)
+Post /api/fiat/deposit-history | Implemented(Tested)
+Post /api/fiat/withdraw-history | Implemented(Tested)
+Post /api/market/wstoken | Implemented(Tested)
+Post /api/user/limits | Implemented
+Post /api/user/trading-credits | Implemented
 Post /api/market/v2/place-bid | Implemented
 Post /api/market/v2/place-ask | Implemented
 Post /api/market/v2/cancel-order | Implemented

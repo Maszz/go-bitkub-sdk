@@ -48,13 +48,14 @@ func (c *HttpClient) DoRequest(url string, method string, body []byte, header *f
 	if resp.StatusCode() >= fasthttp.StatusBadRequest {
 		apiErr := new(APIError)
 		e := json.Unmarshal(resp.Body(), apiErr)
-		fmt.Println("err on request", string(resp.Body()))
+		// fmt.Println("err on request", string(resp.Body()))
 		if e != nil {
 			fmt.Printf("failed to unmarshal json: %s", e)
+			return nil
 		}
 		// return nil, apiErr
 
-		fmt.Println("err on request", apiErr)
+		// fmt.Println("err on request", apiErr)
 		return nil
 
 	}
