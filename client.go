@@ -126,40 +126,155 @@ func (c *Client) catchAPIError(data []byte) error {
 	return nil
 }
 
+/*
+Function Get API Endpoint Status
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetStatusTx().Do()
+*/
 func (c *Client) NewGetStatusTx() *GetStatusTx {
 	return &GetStatusTx{c: c}
 }
 
+/*
+Function Get Server time
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetServerTimeTx().Do()
+*/
 func (c *Client) NewGetServerTimeTx() *GetServerTimeTx {
 	return &GetServerTimeTx{c: c}
 }
 
+/*
+Function Get avarable Symbols
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetSymbolsTx().Do()
+*/
 func (c *Client) NewGetSymbolsTx() *GetSymbolsTx {
 	return &GetSymbolsTx{c: c}
 }
 
+/*
+Function Get ticker information
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetTickerTx().Do()
+*/
 func (c *Client) NewGetTickerTx() *GetTickerTx {
 	return &GetTickerTx{c: c}
 }
 
+/*
+Function toList recent trades
+
+Parameters Description:
+  - Symbol(types.Symbol) : Symbol of coin
+  - Limit(Optional[int]) : Limit of result
+
+Parameters Should be set before call Do() function:
+
+	func (*GetTradesTx) Symbol(symbol types.Symbol)
+	func (*GetTradesTx) Limit(limit int)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGGetTradesTx().Symbol(symbols.THB_BTC).Do()
+*/
 func (c *Client) NewGetTradesTx() *GetTradesTx {
 	return &GetTradesTx{c: c}
 }
 
-// @param symbol string
-// @param limit int
+/*
+Function to List open buy orders
+
+Parameters Description:
+  - Symbol(types.Symbol) : Symbol of coin
+  - Limit(Optional[int]) : Limit of result
+
+Parameters Should be set before call Do() function:
+
+	func (*GetBidsTx) Symbol(symbol types.Symbol)
+	func (*GetBidsTx) Limit(limit int)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetBidsTx().Symbol(symbols.THB_BTC).Do()
+*/
 func (c *Client) NewGetBidsTx() *GetBidsTx {
 	return &GetBidsTx{c: c}
 }
 
+/*
+Function to List open sell orders
+
+Parameters Description:
+  - Symbol(types.Symbol) : Symbol of coin
+  - Limit(Optional[int]) : Limit of result
+
+Parameters Should be set before call Do() function:
+
+	func (*GetAsksTx) Symbol(symbol types.Symbol)
+	func (*GetAsksTx) Limit(limit int)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetAsksTx().Symbol(symbols.THB_BTC).Do()
+*/
 func (c *Client) NewGetAsksTx() *GetAsksTx {
 	return &GetAsksTx{c: c}
 }
 
+/*
+Function to List all open orders
+
+Parameters Description:
+  - Symbol(types.Symbol) : Symbol of coin
+  - Limit(Optional[int]) : Limit of result
+
+Parameters Should be set before call Do() function:
+
+	func (*GetBooksTx) Symbol(symbol types.Symbol)
+	func (*GetBooksTx) Limit(limit int)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetBooksTx().Symbol(symbols.THB_BTC).Do()
+*/
 func (c *Client) NewGetBooksTx() *GetOpenBooksTx {
 	return &GetOpenBooksTx{c: c}
 }
 
+/*
+Function to Get Market Depth
+
+Parameters Description:
+  - Symbol(types.Symbol) : Symbol of coin
+  - Limit(Optional[int]) : Limit of result
+
+Parameters Should be set before call Do() function:
+
+	func (*GetMarketDepthTx) Symbol(symbol types.Symbol)
+	func (*GetMarketDepthTx) Limit(limit int)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetMarketDepthTx().Symbol(symbols.THB_BTC).Do()
+*/
 func (c *Client) NewGetMarketDepthTx() *GetMarketDepthTx {
 	return &GetMarketDepthTx{c: c}
 }
@@ -168,22 +283,120 @@ func (c *Client) NewGetTradingviewHistoryTx() *GetTradingViewHistoryTx {
 	return &GetTradingViewHistoryTx{c: c}
 }
 
+/*
+Function to Get Wallets
+
+Excute Function:
+
+	func (*GetWalletsTx) Do() (*types.WalletResponse, error)
+	func (*GetWalletsTx) DoAny() (*types.WalletResponseAny, error)
+
+DoAny() function will return map[string]float64 instead of Hardcode Currency Keys.
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetWalletsTx().Do()
+*/
 func (c *Client) NewGetWalletsTx() *GetWalletsTx {
 	return &GetWalletsTx{c: c}
 }
 
+/*
+Function to Get Balances
+
+Excute Function:
+
+	func (*GetBalancesTx) Do() (*types.BalancesResponse, error)
+	func (*GetBalancesTx) DoAny() (*types.BalancesResponseAny, error)
+
+DoAny() function will return map[string]BalancesProps instead of Hardcode Currency Keys
+in result keys of `BalancesResponse` struct.
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetBalancesTx().Do()
+*/
 func (c *Client) NewGetBalancesTx() *GetBalancesTx {
 	return &GetBalancesTx{c: c}
 }
 
+/*
+Function to Create Buy Order
+
+Parameters Description:
+  - Symbol(types.Symbol) : symbol of pair
+  - Amount(float64) : Amount of order
+  - Rate(float64) : Rate of order
+  - OrderType(types.OrderType) : Order type
+
+Parameters Should be set before call Do() function:
+
+	func (*PlaceBidTx) Symbol(symbol types.Symbol)
+	func (*PlaceBidTx) Amount(amount float64)
+	func (*PlaceBidTx) Rate(rate float64)
+	func (*PlaceBidTx) OrderType(orderType types.OrderType)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewPlaceBidTx().Symbol(symbols.THB_BTC)
+	.Amount(1000).OrderType(types.OrderTypeMarket).Do()
+*/
 func (c *Client) NewPlaceBidTx() *PlaceBidTx {
 	return &PlaceBidTx{c: c}
 }
 
+/*
+Function to Create Sell Order
+
+Parameters Description:
+  - Symbol(types.Symbol) : symbol of pair
+  - Amount(float64) : Amount of order
+  - Rate(float64) : Rate of order
+  - OrderType(types.OrderType) : Order type
+
+Parameters Should be set before call Do() function:
+
+	func (*PlaceAskTx) Symbol(symbol types.Symbol)
+	func (*PlaceAskTx) Amount(amount float64)
+	func (*PlaceAskTx) Rate(rate float64)
+	func (*PlaceAskTx) OrderType(orderType types.OrderType)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewPlaceAskTx().Symbol(symbols.THB_BTC)
+	.Amount(0.001).OrderType(types.OrderTypeMarket).Do()
+*/
 func (c *Client) NewPlaceAskTx() *PlaceAskTx {
 	return &PlaceAskTx{c: c}
 }
 
+/*
+Function to Cancel Orders
+
+Parameters Description:
+  - Symbol(types.Symbol) : Page of result
+  - OrderID(types.OrderID) : Order ID
+  - OrderSide(types.OrderSide) : Order side
+  - OrderHash(Optional[types.OrderHash]) : Order hash
+
+Parameters Should be set before call Do() function:
+
+	func (*CancelOrderTx) Symbol(symbol types.Symbol)
+	func (*CancelOrderTx) OrderID(orderID types.OrderID)
+	func (*CancelOrderTx) OrderSide(orderSide types.OrderSide)
+	func (*CancelOrderTx) OrderHash(orderHash types.OrderHash)
+
+When OrderHash is set, Symbol, OrderID and OrderSide will be ignored.
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewCancelOrderTx().OrderHash("OrderHash").Do()
+*/
 func (c *Client) NewCancelOrderTx() *CancelOrderTx {
 	return &CancelOrderTx{c: c}
 }
