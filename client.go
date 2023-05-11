@@ -188,18 +188,96 @@ func (c *Client) NewCancelOrderTx() *CancelOrderTx {
 	return &CancelOrderTx{c: c}
 }
 
+/*
+Function to Get Open Orders
+
+Parameters Description:
+  - Symbol(types.Symbol) : Symbol of order
+
+Parameters Should be set before call Do() function:
+
+	func (*GetOpenOrdersTx) Symbol(symbol types.Symbol)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetOpenOrdersTx().Symbol(symbols.THB_BTC).Do()
+*/
 func (c *Client) NewGetOpenOrdersTx() *GetOpenOrdersTx {
 	return &GetOpenOrdersTx{c: c}
 }
 
+/*
+Function to Get Order History
+
+Parameters Description:
+  - Symbol(types.Symbol) : Symbol of order
+  - Page(Optional[int]) : Page of result
+  - Limit(Optional[int]) : Limit of result
+  - Start(Optional[types.Timestamp]) : Start Time
+  - End(Optional[types.Timestamp]) : End time
+
+Parameters Should be set before call Do() function:
+
+	func (*GetOrderHistoryTx) Symbol(symbol types.Symbol)
+	func (*GetOrderHistoryTx) Page(page int)
+	func (*GetOrderHistoryTx) Limit(limit int)
+	func (*GetOrderHistoryTx) Start(start types.Timestamp)
+	func (*GetOrderHistoryTx) End(end types.Timestamp)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetOrderHistoryTx().Symbol(symbols.THB_BTC).Do()
+*/
 func (c *Client) NewGetOrderHistoryTx() *GetOrderHistoryTx {
 	return &GetOrderHistoryTx{c: c}
 }
 
+/*
+Function to Get Order Information
+
+Parameters Description:
+  - Symbol(types.Symbol) : Page of result
+  - OrderID(types.OrderID) : Order ID
+  - OrderSide(types.OrderSide) : Order side
+  - OrderHash(Optional[types.OrderHash]) : Order hash
+
+Parameters Should be set before call Do() function:
+
+	func (*GetOrderInfoTx) Symbol(symbol types.Symbol)
+	func (*GetOrderInfoTx) OrderID(orderID types.OrderID)
+	func (*GetOrderInfoTx) OrderSide(orderSide types.OrderSide)
+	func (*GetOrderInfoTx) OrderHash(orderHash types.OrderHash)
+
+When OrderHash is set, Symbol, OrderID and OrderSide will be ignored.
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetOrderInfoTx().OrderHash("OrderHash").Do()
+*/
 func (c *Client) NewGetOrderInfoTx() *GetOrderInfoTx {
 	return &GetOrderInfoTx{c: c}
 }
 
+/*
+Function to Get Crypto Wallet Address
+
+Parameters Description:
+  - Page(Optional[int]) : Page of result
+  - Limit(Optional[int]) : Limit of result
+
+Parameters Should be set before call Do() function:
+
+	func (*GetCryptoAddressesTx) Page(page int)
+	func (*GetCryptoAddressesTx) Limit(limit int)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetCryptoAddressesTx().Page(1).Limit(5).Do()
+*/
 func (c *Client) NewGetCryptoAddressesTx() *GetCryptoAddressesTx {
 	return &GetCryptoAddressesTx{c: c}
 }
@@ -226,7 +304,7 @@ Example of usage:
 
 	client := bitkub.NewClient()
 	res, err := client.NewCryptoWithdrawTx().Network(chains.BTC)
-	.Address("address").Amount(0.01).Currency("BTC").Do(context.Background())
+	.Address("address").Amount(0.01).Currency("BTC").Do()
 */
 func (c *Client) NewCryptoWithdrawTx() *CryptoWithdrawTx {
 	return &CryptoWithdrawTx{c: c}
@@ -236,8 +314,8 @@ func (c *Client) NewCryptoWithdrawTx() *CryptoWithdrawTx {
 Function to Get History Crypto Deposit Transaction
 
 Parameters Description:
-  - Page : Page of result
-  - Limit : Limit of result
+  - Page(Optional[int]) : Page of result
+  - Limit(Optional[int]) : Limit of result
 
 Parameters Should be set before call Do() function:
 
@@ -247,7 +325,7 @@ Parameters Should be set before call Do() function:
 Example of usage:
 
 	client := bitkub.NewClient()
-	res, err := client.NewGetCryptoDepositTx().Page(1).Limit(5).Do(context.Background())
+	res, err := client.NewGetCryptoDepositTx().Page(1).Limit(5).Do()
 */
 func (c *Client) NewGetCryptoDepositTx() *GetCryptoDepositTx {
 	return &GetCryptoDepositTx{c: c}
@@ -257,8 +335,8 @@ func (c *Client) NewGetCryptoDepositTx() *GetCryptoDepositTx {
 Function to Get History Crypto Withdraw Transaction
 
 Parameters Description:
-  - Page(int) : Page of result
-  - Limit(int) : Limit of result
+  - Page(Optional[int]) : Page of result
+  - Limit(Optional[int]) : Limit of result
 
 Parameters Should be set before call Do() function:
 
@@ -268,36 +346,128 @@ Parameters Should be set before call Do() function:
 Example of usage:
 
 	client := bitkub.NewClient()
-	res, err := client.NewGetCryptoWithdrawTx().Page(1).Limit(5).Do(context.Background())
+	res, err := client.NewGetCryptoWithdrawTx().Page(1).Limit(5).Do()
 */
 func (c *Client) NewGetCryptoWithdrawTx() *GetCryptoWithdrawTx {
 	return &GetCryptoWithdrawTx{c: c}
 }
 
+/*
+Function to Get Fiat Accounts Transaction
+
+Parameters Description:
+  - Page(Optional[int]) : Page of result
+  - Limit(Optional[int]) : Limit of result
+
+Parameters Should be set before call Do() function:
+
+	func (*GetFiatAccountsTx) Page(page int)
+	func (*GetFiatAccountsTx) Limit(limit int)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetFiatAccountsTx().Page(1).Limit(5).Do()
+*/
 func (c *Client) NewGetFiatAccountsTx() *GetFiatAccountsTx {
 	return &GetFiatAccountsTx{c: c}
 }
 
+/*
+Function to Get Fiat Withdraw Transaction
+
+Parameters Description:
+  - ID(string) : Fiat Account ID
+  - Amount(float64) : Amount of fiat to withdraw
+
+Parameters Should be set before call Do() function:
+
+	func (*FiatWithdrawTx) Amount(amount float64)
+	func (*FiatWithdrawTx) ID(id string) *FiatWithdrawTx
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewFiatWithdrawTx().Amount(1000).ID("Fiat Account ID").Do()
+*/
 func (c *Client) NewFiatWithdrawTx() *FiatWithdrawTx {
 	return &FiatWithdrawTx{c: c}
 }
 
+/*
+Function to Get Fiat Deposit History Transaction
+
+Parameters Description:
+  - Page(Optional[int]) : Page of result
+  - Limit(Optional[int]) : Limit of result
+
+Parameters Should be set before call Do() function:
+
+	func (*GetFiatDepositsTx) Page(page int)
+	func (*GetFiatDepositsTx) Limit(limit int)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetFiatDepositsTx().Page(1).Limit(5).Do()
+*/
 func (c *Client) NewGetFiatDepositsTx() *GetFiatDepositsTx {
 	return &GetFiatDepositsTx{c: c}
 }
 
+/*
+Function to Get Fiat Withdraw History Transaction
+
+Parameters Description:
+  - Page(Optional[int]) : Page of result
+  - Limit(Optional[int]) : Limit of result
+
+Parameters Should be set before call Do() function:
+
+	func (*GetFiatWithdrawsTx) Page(page int)
+	func (*GetFiatWithdrawsTx) Limit(limit int)
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetFiatWithdralsTx().Page(1).Limit(5).Do()
+*/
 func (c *Client) NewGetFiatWithdralsTx() *GetFiatWithdrawsTx {
 	return &GetFiatWithdrawsTx{c: c}
 }
 
+/*
+Function to Get User limit Transaction
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetUserLimitsTx().Do()
+*/
 func (c *Client) NewGetUserLimitsTx() *GetUserLimitsTx {
 	return &GetUserLimitsTx{c: c}
 }
 
+/*
+Function to Get Trading credits Transaction
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetTradingCreditsTx().Do()
+*/
 func (c *Client) NewGetTradingCreditsTx() *GetTradingCreditsTx {
 	return &GetTradingCreditsTx{c: c}
 }
 
+/*
+Function to Get Websocket Token Transaction
+
+Example of usage:
+
+	client := bitkub.NewClient()
+	res, err := client.NewGetWsTokenTx().Do()
+*/
 func (c *Client) NewGetWsTokenTx() *GetWsTokenTx {
 	return &GetWsTokenTx{c: c}
 }
