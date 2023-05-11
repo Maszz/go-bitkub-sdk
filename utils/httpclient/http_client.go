@@ -36,11 +36,8 @@ func (c *HTTPClient) DoRequest(url, method string, body []byte, header *fasthttp
 	if body != nil {
 		req.SetBody(body)
 	}
-
 	err := c.client.Do(req, resp)
 	if err != nil {
-		fmt.Printf("Client get failed: %s\n", err)
-
 		return nil, err
 	}
 	if resp.StatusCode() >= fasthttp.StatusBadRequest {
