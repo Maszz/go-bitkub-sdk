@@ -1,7 +1,6 @@
 package bitkub
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/Maszz/go-bitkub-sdk/types"
@@ -27,8 +26,8 @@ func (s *GetFiatAccountsTx) Limit(limit int) *GetFiatAccountsTx {
 	return s
 }
 
-func (s *GetFiatAccountsTx) Do(ctx context.Context) (res *types.FiatAccountsResponse, err error) {
-	if err = s.validate(); err != nil {
+func (s *GetFiatAccountsTx) Do() (*types.FiatAccountsResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -41,7 +40,7 @@ func (s *GetFiatAccountsTx) Do(ctx context.Context) (res *types.FiatAccountsResp
 	}
 
 	payload := types.FiatAccountPayload{
-		Ts: utils.CurrentTimestamp(),
+		TS: utils.CurrentTimestamp(),
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
@@ -49,15 +48,15 @@ func (s *GetFiatAccountsTx) Do(ctx context.Context) (res *types.FiatAccountsResp
 		return nil, err
 	}
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.FiatAccountsResponse)
+	res := new(types.FiatAccountsResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
@@ -68,10 +67,10 @@ func (s *GetFiatAccountsTx) Do(ctx context.Context) (res *types.FiatAccountsResp
 
 func (s *GetFiatAccountsTx) validate() error {
 	if s.page < 0 {
-		return fmt.Errorf("page must be positive number")
+		return types.ErrPageMustBePositive
 	}
 	if s.limit < 0 {
-		return fmt.Errorf("limit must be positive number")
+		return types.ErrLimitMustBePositive
 	}
 	return nil
 }
@@ -95,12 +94,12 @@ func (s *GetFiatAccountsTx) urlBuilder() string {
 
 type FiatWithdrawTx struct {
 	c         *Client
-	fiatAccId string
+	fiatAccID string
 	amount    float64
 }
 
-func (s *FiatWithdrawTx) Id(id string) *FiatWithdrawTx {
-	s.fiatAccId = id
+func (s *FiatWithdrawTx) ID(id string) *FiatWithdrawTx {
+	s.fiatAccID = id
 	return s
 }
 
@@ -109,8 +108,8 @@ func (s *FiatWithdrawTx) Amount(amount float64) *FiatWithdrawTx {
 	return s
 }
 
-func (s *FiatWithdrawTx) Do(ctx context.Context) (res *types.FiatWithdrawResponse, err error) {
-	if err = s.validate(); err != nil {
+func (s *FiatWithdrawTx) Do() (*types.FiatWithdrawResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -121,8 +120,8 @@ func (s *FiatWithdrawTx) Do(ctx context.Context) (res *types.FiatWithdrawRespons
 	}
 
 	payload := types.FiatWithdrawPayload{
-		Ts:        utils.CurrentTimestamp(),
-		FiatAccId: s.fiatAccId,
+		TS:        utils.CurrentTimestamp(),
+		FiatAccID: s.fiatAccID,
 		Amount:    s.amount,
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))
@@ -131,15 +130,15 @@ func (s *FiatWithdrawTx) Do(ctx context.Context) (res *types.FiatWithdrawRespons
 		return nil, err
 	}
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.FiatWithdrawResponse)
+	res := new(types.FiatWithdrawResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
@@ -149,11 +148,11 @@ func (s *FiatWithdrawTx) Do(ctx context.Context) (res *types.FiatWithdrawRespons
 }
 
 func (s *FiatWithdrawTx) validate() error {
-	if s.fiatAccId == "" {
-		return fmt.Errorf("fiatAccId is required")
+	if s.fiatAccID == "" {
+		return types.ErrFiatAccIDMandatory
 	}
 	if s.amount <= 0 {
-		return fmt.Errorf("amount must be positive number")
+		return types.ErrAmountMustBePositive
 	}
 	return nil
 }
@@ -174,8 +173,8 @@ func (s *GetFiatDepositsTx) Limit(limit int) *GetFiatDepositsTx {
 	return s
 }
 
-func (s *GetFiatDepositsTx) Do(ctx context.Context) (res *types.GetFiatDepositsResponse, err error) {
-	if err = s.validate(); err != nil {
+func (s *GetFiatDepositsTx) Do() (*types.GetFiatDepositsResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -188,7 +187,7 @@ func (s *GetFiatDepositsTx) Do(ctx context.Context) (res *types.GetFiatDepositsR
 	}
 
 	payload := types.GetFiatDepositsPayload{
-		Ts: utils.CurrentTimestamp(),
+		TS: utils.CurrentTimestamp(),
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
@@ -196,15 +195,15 @@ func (s *GetFiatDepositsTx) Do(ctx context.Context) (res *types.GetFiatDepositsR
 		return nil, err
 	}
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.GetFiatDepositsResponse)
+	res := new(types.GetFiatDepositsResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
@@ -215,10 +214,10 @@ func (s *GetFiatDepositsTx) Do(ctx context.Context) (res *types.GetFiatDepositsR
 
 func (s *GetFiatDepositsTx) validate() error {
 	if s.page < 0 {
-		return fmt.Errorf("page must be positive number")
+		return types.ErrPageMustBePositive
 	}
 	if s.limit < 0 {
-		return fmt.Errorf("limit must be positive number")
+		return types.ErrLimitMustBePositive
 	}
 	return nil
 }
@@ -238,7 +237,6 @@ func (s *GetFiatDepositsTx) urlBuilder() string {
 	}
 
 	return url
-
 }
 
 type GetFiatWithdrawsTx struct {
@@ -257,8 +255,8 @@ func (s *GetFiatWithdrawsTx) Limit(limit int) *GetFiatWithdrawsTx {
 	return s
 }
 
-func (s *GetFiatWithdrawsTx) Do(ctx context.Context) (res *types.GetFiatWithdrawsResponse, err error) {
-	if err = s.validate(); err != nil {
+func (s *GetFiatWithdrawsTx) Do() (*types.GetFiatWithdrawsResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -271,7 +269,7 @@ func (s *GetFiatWithdrawsTx) Do(ctx context.Context) (res *types.GetFiatWithdraw
 	}
 
 	payload := types.GetFiatWithdrawsPayload{
-		Ts: utils.CurrentTimestamp(),
+		TS: utils.CurrentTimestamp(),
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
@@ -279,15 +277,15 @@ func (s *GetFiatWithdrawsTx) Do(ctx context.Context) (res *types.GetFiatWithdraw
 		return nil, err
 	}
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.GetFiatWithdrawsResponse)
+	res := new(types.GetFiatWithdrawsResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
@@ -298,10 +296,10 @@ func (s *GetFiatWithdrawsTx) Do(ctx context.Context) (res *types.GetFiatWithdraw
 
 func (s *GetFiatWithdrawsTx) validate() error {
 	if s.page < 0 {
-		return fmt.Errorf("page must be positive number")
+		return types.ErrPageMustBePositive
 	}
 	if s.limit < 0 {
-		return fmt.Errorf("limit must be positive number")
+		return types.ErrLimitMustBePositive
 	}
 	return nil
 }

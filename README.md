@@ -77,7 +77,7 @@ All responses return in go struct.
 
 ## Create Sell Order
 ```golang
-res, err := client.NewPlaceAskTx().Symbol(symbols.THB_BTC).Amount(0.001).OrderType(types.OrderTypeMarket).Do(context.Background())
+res, err := client.NewPlaceAskTx().Symbol(symbols.THB_BTC).Amount(0.001).OrderType(types.OrderTypeMarket).Do()
 if err != nil {
 		fmt.Println(err)
 		return

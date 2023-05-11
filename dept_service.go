@@ -1,7 +1,6 @@
 package bitkub
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/Maszz/go-bitkub-sdk/types"
@@ -25,9 +24,8 @@ func (s *GetMarketDepthTx) Limit(limit int) *GetMarketDepthTx {
 	return s
 }
 
-func (s *GetMarketDepthTx) Do(ctx context.Context) (res *types.MarketDepthResponse, err error) {
-
-	if err = s.validate(); err != nil {
+func (s *GetMarketDepthTx) Do() (*types.MarketDepthResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -38,11 +36,11 @@ func (s *GetMarketDepthTx) Do(ctx context.Context) (res *types.MarketDepthRespon
 		endpoint: types.NewEndPoint(endpoint),
 		signed:   secTypeNone,
 	}
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 	if err != nil {
 		return nil, err
 	}
-	res = new(types.MarketDepthResponse)
+	res := new(types.MarketDepthResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
@@ -56,7 +54,7 @@ func (s *GetMarketDepthTx) validate() error {
 		s.limit = 10
 	}
 	if s.symbol == "" {
-		return fmt.Errorf("symbol is mandatory")
+		return types.ErrSymbolMandatory
 	}
 
 	return nil

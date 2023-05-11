@@ -1,7 +1,7 @@
 package types
 
 type GetUserLimitsPayload struct {
-	Ts  Timestamp `json:"ts,omitempty"`
+	TS  Timestamp `json:"ts,omitempty"`
 	Sig Signature `json:"sig,omitempty"`
 }
 
@@ -39,7 +39,7 @@ type GetUserLimitsResponse struct {
 }
 
 type GetTradingCreditsPayload struct {
-	Ts  Timestamp `json:"ts,omitempty"`
+	TS  Timestamp `json:"ts,omitempty"`
 	Sig Signature `json:"sig,omitempty"`
 }
 

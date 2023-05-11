@@ -18,7 +18,7 @@ type request struct {
 	body     []byte
 	query    fasthttp.Args
 	headers  *fasthttp.RequestHeader
-	fullUrl  string
+	fullURL  string
 	signed   secType
 }
 

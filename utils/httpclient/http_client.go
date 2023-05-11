@@ -1,4 +1,4 @@
-package http_client
+package httpclient
 
 import (
 	"encoding/json"
@@ -7,13 +7,13 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-type HttpClient struct {
-	cliient *fasthttp.Client
+type HTTPClient struct {
+	client *fasthttp.Client
 }
 
-func NewHttpClient() *HttpClient {
-	return &HttpClient{
-		cliient: &fasthttp.Client{},
+func NewHTTPClient() *HTTPClient {
+	return &HTTPClient{
+		client: &fasthttp.Client{},
 	}
 }
 
@@ -22,7 +22,7 @@ type APIError struct {
 	Message string `json:"msg"`
 }
 
-func (c *HttpClient) DoRequest(url string, method string, body []byte, header *fasthttp.RequestHeader) []byte {
+func (c *HTTPClient) DoRequest(url, method string, body []byte, header *fasthttp.RequestHeader) ([]byte, error) {
 	req := fasthttp.AcquireRequest()
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseRequest(req)   // <- do not forget to release
@@ -37,36 +37,28 @@ func (c *HttpClient) DoRequest(url string, method string, body []byte, header *f
 		req.SetBody(body)
 	}
 
-	// query.CopyTo(req.URI().QueryArgs())
-
-	err := c.cliient.Do(req, resp)
+	err := c.client.Do(req, resp)
 	if err != nil {
 		fmt.Printf("Client get failed: %s\n", err)
-		return nil
 
+		return nil, err
 	}
 	if resp.StatusCode() >= fasthttp.StatusBadRequest {
 		apiErr := new(APIError)
 		e := json.Unmarshal(resp.Body(), apiErr)
-		// fmt.Println("err on request", string(resp.Body()))
 		if e != nil {
-			fmt.Printf("failed to unmarshal json: %s", e)
-			return nil
+
+			return nil, err
 		}
-		// return nil, apiErr
 
-		// fmt.Println("err on request", apiErr)
-		return nil
-
+		return nil, err
 	}
-
 	bodyBytes := resp.Body()
-	// fmt.Printf("Client get success: %s\n", *(*string)(unsafe.Pointer(&bodyBytes)))
 
-	return bodyBytes
+	return bodyBytes, nil
 }
 
-func (c *HttpClient) Post(url string, body []byte) []byte {
+func (c *HTTPClient) Post(url string, body []byte) []byte {
 	req := fasthttp.AcquireRequest()
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseRequest(req)   // <- do not forget to release
@@ -76,17 +68,18 @@ func (c *HttpClient) Post(url string, body []byte) []byte {
 	req.Header.SetMethod("POST")
 	req.SetBody(body)
 
-	err := c.cliient.Do(req, resp)
+	err := c.client.Do(req, resp)
 	if err != nil {
 		fmt.Printf("Client post failed: %s\n", err)
+
 		return nil
 	}
-
 	bodyBytes := resp.Body()
+
 	return bodyBytes
 }
 
-func (c *HttpClient) Get(url string) []byte {
+func (c *HTTPClient) Get(url string) []byte {
 	req := fasthttp.AcquireRequest()
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseRequest(req)   // <- do not forget to release
@@ -94,17 +87,18 @@ func (c *HttpClient) Get(url string) []byte {
 
 	req.SetRequestURI(url)
 
-	err := c.cliient.Do(req, resp)
+	err := c.client.Do(req, resp)
 	if err != nil {
 		fmt.Printf("Client get failed: %s\n", err)
+
 		return nil
 	}
-
 	bodyBytes := resp.Body()
+
 	return bodyBytes
 }
 
-func (c *HttpClient) GetWithHeader(url string, header map[string]string) []byte {
+func (c *HTTPClient) GetWithHeader(url string, header map[string]string) []byte {
 	req := fasthttp.AcquireRequest()
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseRequest(req)   // <- do not forget to release
@@ -115,9 +109,10 @@ func (c *HttpClient) GetWithHeader(url string, header map[string]string) []byte 
 		req.Header.Set(k, v)
 	}
 
-	err := c.cliient.Do(req, resp)
+	err := c.client.Do(req, resp)
 	if err != nil {
 		fmt.Printf("Client get failed: %s\n", err)
+
 		return nil
 	}
 
@@ -127,7 +122,7 @@ func (c *HttpClient) GetWithHeader(url string, header map[string]string) []byte 
 	return bodyBytes
 }
 
-func (c *HttpClient) PostWithHeader(url string, body []byte, header map[string]string) []byte {
+func (c *HTTPClient) PostWithHeader(url string, body []byte, header map[string]string) []byte {
 	req := fasthttp.AcquireRequest()
 	resp := fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseRequest(req)   // <- do not forget to release
@@ -139,12 +134,13 @@ func (c *HttpClient) PostWithHeader(url string, body []byte, header map[string]s
 		req.Header.Set(k, v)
 	}
 
-	err := c.cliient.Do(req, resp)
+	err := c.client.Do(req, resp)
 	if err != nil {
 		fmt.Printf("Client post failed: %s\n", err)
+
 		return nil
 	}
-
 	bodyBytes := resp.Body()
+
 	return bodyBytes
 }

@@ -38,12 +38,12 @@ type CryptoAddressesResponseWithAllQuery struct {
 	} `json:"pagination"`
 }
 type CryptoAddressesPayload struct {
-	Ts  Timestamp `json:"ts,omitempty"`
+	TS  Timestamp `json:"ts,omitempty"`
 	Sig Signature `json:"sig,omitempty"`
 }
 
 type CryptoWithdrawPayload struct {
-	Ts      Timestamp         `json:"ts,omitempty"`
+	TS      Timestamp         `json:"ts,omitempty"`
 	Sig     Signature         `json:"sig,omitempty"`
 	Cur     string            `json:"cur,omitempty"`
 	Amount  float64           `json:"amt,omitempty"`
@@ -61,12 +61,12 @@ type CryptoWithdrawResponse struct {
 		Cur string  `json:"cur"`
 		Amt float64 `json:"amt"`
 		Fee float64 `json:"fee"`
-		Ts  int     `json:"ts"`
+		TS  int     `json:"ts"`
 	} `json:"result"`
 }
 
 type CryptoInternalWidthdrawPayload struct {
-	Ts      Timestamp `json:"ts,omitempty"`
+	TS      Timestamp `json:"ts,omitempty"`
 	Sig     Signature `json:"sig,omitempty"`
 	Cur     string    `json:"cur,omitempty"`
 	Amount  float64   `json:"amt,omitempty"`
@@ -75,7 +75,7 @@ type CryptoInternalWidthdrawPayload struct {
 }
 
 type GetCryptoDepositPayload struct {
-	Ts  Timestamp `json:"ts,omitempty"`
+	TS  Timestamp `json:"ts,omitempty"`
 	Sig Signature `json:"sig,omitempty"`
 }
 
@@ -100,7 +100,7 @@ type GetCryptoDepositResponse struct {
 }
 
 type GetCryptoWithdrawPayload struct {
-	Ts  Timestamp `json:"ts,omitempty"`
+	TS  Timestamp `json:"ts,omitempty"`
 	Sig Signature `json:"sig,omitempty"`
 }
 
@@ -126,7 +126,7 @@ type GetCryptoWithdrawResponse struct {
 	} `json:"pagination"`
 }
 type CryptoGenerateAddressPayload struct {
-	Ts     Timestamp `json:"ts,omitempty"`
+	TS     Timestamp `json:"ts,omitempty"`
 	Sig    Signature `json:"sig,omitempty"`
 	Symbol Symbol    `json:"sym,omitempty"`
 }

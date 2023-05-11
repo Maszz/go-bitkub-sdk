@@ -1,8 +1,6 @@
 package bitkub
 
 import (
-	"context"
-
 	"github.com/bytedance/sonic"
 
 	"github.com/Maszz/go-bitkub-sdk/types"
@@ -14,21 +12,21 @@ type GetTickerTx struct {
 	c *Client
 }
 
-func (s *GetTickerTx) Do(ctx context.Context) (res *types.TickerResponse, err error) {
+func (s *GetTickerTx) Do() (*types.TickerResponse, error) {
 	r := &request{
 		method:   fasthttp.MethodGet,
 		endpoint: types.MarketTickerEndpoint,
 		signed:   secTypeNone,
 	}
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.TickerResponse)
+	res := new(types.TickerResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
@@ -37,22 +35,22 @@ func (s *GetTickerTx) Do(ctx context.Context) (res *types.TickerResponse, err er
 	return res, nil
 }
 
-func (s *GetTickerTx) DoAny(ctx context.Context) (res *types.TickerResponseAny, err error) {
+func (s *GetTickerTx) DoAny() (*types.TickerResponseAny, error) {
 	r := &request{
 		method:   fasthttp.MethodGet,
 		endpoint: types.MarketTickerEndpoint,
 		signed:   secTypeNone,
 	}
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
 
-	res = new(types.TickerResponseAny)
+	res := new(types.TickerResponseAny)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err

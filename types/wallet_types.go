@@ -4,15 +4,17 @@ import "github.com/bytedance/sonic"
 
 type WalletResponseAny map[string]float64
 
-func (w *WalletResponseAny) Compile() (res WalletResponse) {
+func (w *WalletResponseAny) Compile() *WalletResponse {
 	resultByte, err := sonic.Marshal(w)
+	res := &WalletResponse{}
 	if err != nil {
-		return WalletResponse{}
+		return &WalletResponse{}
 	}
-	err = sonic.Unmarshal(resultByte, &res.Result)
+	err = sonic.Unmarshal(resultByte, res.Result)
 	if err != nil {
-		return WalletResponse{}
+		return &WalletResponse{}
 	}
+
 	return res
 }
 

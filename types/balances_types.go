@@ -3,7 +3,7 @@ package types
 import "github.com/bytedance/sonic"
 
 type BalancesPayload struct {
-	Ts  Timestamp `json:"ts,omitempty"`
+	TS  Timestamp `json:"ts,omitempty"`
 	Sig Signature `json:"sig,omitempty"`
 }
 type BalancesProps struct {
@@ -16,18 +16,19 @@ type BalancesResponseAny struct {
 	Result map[string]BalancesProps `json:"result"`
 }
 
-func (b *BalancesResponseAny) Compile() (res BalancesResponse) {
+func (b *BalancesResponseAny) Compile() *BalancesResponse {
 	resultByte, err := sonic.Marshal(b.Result)
+	res := &BalancesResponse{}
 	if err != nil {
-		return BalancesResponse{}
+		return &BalancesResponse{}
 	}
 	err = sonic.Unmarshal(resultByte, &res.Result)
 	if err != nil {
-		return BalancesResponse{}
+		return &BalancesResponse{}
 	}
 	res.Error = b.Error
-	return res
 
+	return res
 }
 
 type BalancesResult struct {

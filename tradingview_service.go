@@ -1,7 +1,6 @@
 package bitkub
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/Maszz/go-bitkub-sdk/types"
@@ -37,20 +36,19 @@ func (s *GetTradingViewHistoryTx) ToCurrent() *GetTradingViewHistoryTx {
 	return s
 }
 func (s *GetTradingViewHistoryTx) Resolution(resolution types.TimeResolution) *GetTradingViewHistoryTx {
-
 	switch resolution {
-	case types.Time_1m:
-		s.resolution = types.Time_1m
-	case types.Time_5m:
-		s.resolution = types.Time_5m
-	case types.Time_15m:
-		s.resolution = types.Time_15m
-	case types.Time_1h:
-		s.resolution = types.Time_1h
-	case types.Time_240m:
-		s.resolution = types.Time_240m
-	case types.Time_1d:
-		s.resolution = types.Time_1d
+	case types.Time1m:
+		s.resolution = types.Time1m
+	case types.Time5m:
+		s.resolution = types.Time5m
+	case types.Time15m:
+		s.resolution = types.Time15m
+	case types.Time1h:
+		s.resolution = types.Time1h
+	case types.Time240m:
+		s.resolution = types.Time240m
+	case types.Time1d:
+		s.resolution = types.Time1d
 	default:
 		panic("Invalid resolution")
 	}
@@ -58,9 +56,8 @@ func (s *GetTradingViewHistoryTx) Resolution(resolution types.TimeResolution) *G
 	return s
 }
 
-func (s *GetTradingViewHistoryTx) Do(ctx context.Context) (res *types.TradingViewHistoryResponse, err error) {
-
-	if err = s.validate(); err != nil {
+func (s *GetTradingViewHistoryTx) Do() (*types.TradingViewHistoryResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -72,11 +69,11 @@ func (s *GetTradingViewHistoryTx) Do(ctx context.Context) (res *types.TradingVie
 		signed:   secTypeNone,
 	}
 
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 	if err != nil {
 		return nil, err
 	}
-	res = new(types.TradingViewHistoryResponse)
+	res := new(types.TradingViewHistoryResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
@@ -92,10 +89,10 @@ func (s *GetTradingViewHistoryTx) validate() error {
 		s.to = utils.RawCurrentTimestamp()
 	}
 	if s.resolution == "" {
-		s.resolution = types.Time_1h
+		s.resolution = types.Time1h
 	}
 	if s.symbol == "" {
-		return fmt.Errorf("symbol is mandatory")
+		return types.ErrSymbolMandatory
 	}
 	return nil
 }

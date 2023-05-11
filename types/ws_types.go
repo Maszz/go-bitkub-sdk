@@ -1,7 +1,7 @@
 package types
 
 type GetWsTokenPayload struct {
-	Ts  Timestamp `json:"ts,omitempty"`
+	TS  Timestamp `json:"ts,omitempty"`
 	Sig Signature `json:"sig,omitempty"`
 }
 

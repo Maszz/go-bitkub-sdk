@@ -15,7 +15,6 @@ func RawCurrentTimestamp() int64 {
 }
 
 func FormatTimestamp(t time.Time) int64 {
-
 	return t.UnixNano() / (int64(time.Second)) // convert to Seconds
 }
 
@@ -25,5 +24,6 @@ func IndexOf[T string](arr []T, item T) int {
 			return i
 		}
 	}
+
 	return -1
 }

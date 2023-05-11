@@ -1,9 +1,6 @@
 package bitkub
 
 import (
-	"context"
-	"fmt"
-
 	"github.com/Maszz/go-bitkub-sdk/types"
 	"github.com/Maszz/go-bitkub-sdk/utils"
 	"github.com/bytedance/sonic"
@@ -11,11 +8,11 @@ import (
 )
 
 type CancelOrderTx struct {
-	c          *Client
-	symbol     types.Symbol
-	order_id   types.OrderId
-	order_side types.OrderSide
-	order_hash types.OrderHash
+	c         *Client
+	symbol    types.Symbol
+	orderID   types.OrderID
+	orderSide types.OrderSide
+	orderHash types.OrderHash
 }
 
 func (s *CancelOrderTx) Symbol(symbol types.Symbol) *CancelOrderTx {
@@ -23,31 +20,30 @@ func (s *CancelOrderTx) Symbol(symbol types.Symbol) *CancelOrderTx {
 	return s
 }
 
-func (s *CancelOrderTx) OrderID(order_id types.OrderId) *CancelOrderTx {
-	s.order_id = order_id
+func (s *CancelOrderTx) OrderID(orderID types.OrderID) *CancelOrderTx {
+	s.orderID = orderID
 	return s
 }
 
-func (s *CancelOrderTx) OrderSide(order_side types.OrderSide) *CancelOrderTx {
-	switch order_side {
+func (s *CancelOrderTx) OrderSide(orderSide types.OrderSide) *CancelOrderTx {
+	switch orderSide {
 	case types.OrderSideBuy:
-		s.order_side = types.OrderSideBuy
+		s.orderSide = types.OrderSideBuy
 	case types.OrderSideSell:
-		s.order_side = types.OrderSideSell
+		s.orderSide = types.OrderSideSell
 	default:
-		panic("Invalid order_side")
+		panic(types.ErrInvalidOrderSide)
 	}
 	return s
 }
 
-func (s *CancelOrderTx) OrderHash(order_hash types.OrderHash) *CancelOrderTx {
-	s.order_hash = order_hash
+func (s *CancelOrderTx) OrderHash(orderHash types.OrderHash) *CancelOrderTx {
+	s.orderHash = orderHash
 	return s
 }
 
-func (s *CancelOrderTx) Do(ctx context.Context) (res *types.CancelOrderResponse, err error) {
-
-	if err = s.validate(); err != nil {
+func (s *CancelOrderTx) Do() (*types.CancelOrderResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -59,11 +55,11 @@ func (s *CancelOrderTx) Do(ctx context.Context) (res *types.CancelOrderResponse,
 
 	payload := types.CancelOrderPayload{
 
-		Ts:        utils.CurrentTimestamp(),
+		TS:        utils.CurrentTimestamp(),
 		Symbol:    s.symbol,
-		OrderID:   s.order_id,
-		OrderSide: s.order_side,
-		OrderHash: s.order_hash,
+		OrderID:   s.orderID,
+		OrderSide: s.orderSide,
+		OrderHash: s.orderHash,
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
@@ -71,40 +67,38 @@ func (s *CancelOrderTx) Do(ctx context.Context) (res *types.CancelOrderResponse,
 		return nil, err
 	}
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.CancelOrderResponse)
+	res := new(types.CancelOrderResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
 	}
 
 	return res, nil
-
 }
 
-func (s *CancelOrderTx) validate() (err error) {
-	if s.order_hash != "" {
+func (s *CancelOrderTx) validate() error {
+	if s.orderHash != "" {
 		return nil
 	}
 	if s.symbol == "" {
-		return fmt.Errorf("invalid symbol")
+		return types.ErrSymbolMandatory
 	}
-	if s.order_id == "" {
-		return fmt.Errorf("invalid order_id")
+	if s.orderID == "" {
+		return types.ErrOrderIDMandatory
 	}
-	if s.order_side == "" {
-		return fmt.Errorf("invalid order_side")
+	if s.orderSide == "" {
+		return types.ErrInvalidOrderSide
 	}
 	return nil
-
 }
 
 type GetOpenOrdersTx struct {
@@ -117,8 +111,8 @@ func (s *GetOpenOrdersTx) Symbol(symbol types.Symbol) *GetOpenOrdersTx {
 	return s
 }
 
-func (s *GetOpenOrdersTx) Do(ctx context.Context) (res *types.GetOpenOrdersResponse, err error) {
-	if err = s.validate(); err != nil {
+func (s *GetOpenOrdersTx) Do() (*types.GetOpenOrdersResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -129,7 +123,7 @@ func (s *GetOpenOrdersTx) Do(ctx context.Context) (res *types.GetOpenOrdersRespo
 	}
 
 	payload := types.GetOpenOrdersPayload{
-		Ts:     utils.CurrentTimestamp(),
+		TS:     utils.CurrentTimestamp(),
 		Symbol: s.symbol,
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))
@@ -138,27 +132,26 @@ func (s *GetOpenOrdersTx) Do(ctx context.Context) (res *types.GetOpenOrdersRespo
 		return nil, err
 	}
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.GetOpenOrdersResponse)
+	res := new(types.GetOpenOrdersResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
 	}
 
 	return res, nil
-
 }
 
-func (s *GetOpenOrdersTx) validate() (err error) {
+func (s *GetOpenOrdersTx) validate() error {
 	if s.symbol == "" {
-		return fmt.Errorf("invalid symbol")
+		return types.ErrSymbolMandatory
 	}
 	return nil
 }
@@ -197,8 +190,8 @@ func (s *GetOrderHistoryTx) End(end types.Timestamp) *GetOrderHistoryTx {
 	return s
 }
 
-func (s *GetOrderHistoryTx) Do(ctx context.Context) (res *types.GetOrderHistoryResponse, err error) {
-	if err = s.validate(); err != nil {
+func (s *GetOrderHistoryTx) Do() (*types.GetOrderHistoryResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -209,7 +202,7 @@ func (s *GetOrderHistoryTx) Do(ctx context.Context) (res *types.GetOrderHistoryR
 	}
 
 	payload := types.GetOrderHistoryPayload{
-		Ts:     utils.CurrentTimestamp(),
+		TS:     utils.CurrentTimestamp(),
 		Symbol: s.symbol,
 		Page:   s.page,
 		Limit:  s.limit,
@@ -222,16 +215,16 @@ func (s *GetOrderHistoryTx) Do(ctx context.Context) (res *types.GetOrderHistoryR
 		return nil, err
 	}
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.GetOrderHistoryResponse)
+	res := new(types.GetOrderHistoryResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
@@ -240,31 +233,31 @@ func (s *GetOrderHistoryTx) Do(ctx context.Context) (res *types.GetOrderHistoryR
 	return res, nil
 }
 
-func (s *GetOrderHistoryTx) validate() (err error) {
+func (s *GetOrderHistoryTx) validate() error {
 	if s.symbol == "" {
-		return fmt.Errorf("require symbol")
+		return types.ErrSymbolMandatory
 	}
 	if s.page < 0 {
-		return fmt.Errorf("invalid page")
+		return types.ErrPageMustBePositive
 	}
 	if s.limit < 0 {
-		return fmt.Errorf("invalid limit")
+		return types.ErrLimitMustBePositive
 	}
 	if s.start < 0 {
-		return fmt.Errorf("invalid start")
+		return types.ErrInvalidTimeStamp
 	}
 	if s.end < 0 {
-		return fmt.Errorf("invalid end")
+		return types.ErrInvalidTimeStamp
 	}
 	return nil
 }
 
 type GetOrderInfoTx struct {
-	c          *Client
-	symbol     types.Symbol
-	order_id   types.OrderId
-	order_side types.OrderSide
-	order_hash types.OrderHash
+	c         *Client
+	symbol    types.Symbol
+	orderID   types.OrderID
+	orderSide types.OrderSide
+	orderHash types.OrderHash
 }
 
 func (s *GetOrderInfoTx) Symbol(symbol types.Symbol) *GetOrderInfoTx {
@@ -272,30 +265,30 @@ func (s *GetOrderInfoTx) Symbol(symbol types.Symbol) *GetOrderInfoTx {
 	return s
 }
 
-func (s *GetOrderInfoTx) OrderID(order_id types.OrderId) *GetOrderInfoTx {
-	s.order_id = order_id
+func (s *GetOrderInfoTx) OrderID(orderID types.OrderID) *GetOrderInfoTx {
+	s.orderID = orderID
 	return s
 }
 
-func (s *GetOrderInfoTx) OrderSide(order_side types.OrderSide) *GetOrderInfoTx {
-	switch order_side {
+func (s *GetOrderInfoTx) OrderSide(orderSide types.OrderSide) *GetOrderInfoTx {
+	switch orderSide {
 	case types.OrderSideBuy:
-		s.order_side = types.OrderSideBuy
+		s.orderSide = types.OrderSideBuy
 	case types.OrderSideSell:
-		s.order_side = types.OrderSideSell
+		s.orderSide = types.OrderSideSell
 	default:
-		panic("Invalid order_side")
+		panic(types.ErrInvalidOrderSide)
 	}
 	return s
 }
 
-func (s *GetOrderInfoTx) OrderHash(order_hash types.OrderHash) *GetOrderInfoTx {
-	s.order_hash = order_hash
+func (s *GetOrderInfoTx) OrderHash(orderHash types.OrderHash) *GetOrderInfoTx {
+	s.orderHash = orderHash
 	return s
 }
 
-func (s *GetOrderInfoTx) Do(ctx context.Context) (res *types.GetOrdersInfoResponse, err error) {
-	if err = s.validate(); err != nil {
+func (s *GetOrderInfoTx) Do() (*types.GetOrdersInfoResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -306,11 +299,11 @@ func (s *GetOrderInfoTx) Do(ctx context.Context) (res *types.GetOrdersInfoRespon
 	}
 
 	payload := types.GetOrdersInfoPayload{
-		Ts:        utils.CurrentTimestamp(),
+		TS:        utils.CurrentTimestamp(),
 		Symbol:    s.symbol,
-		OrderID:   s.order_id,
-		OrderSide: s.order_side,
-		OrderHash: s.order_hash,
+		OrderID:   s.orderID,
+		OrderSide: s.orderSide,
+		OrderHash: s.orderHash,
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
@@ -318,16 +311,16 @@ func (s *GetOrderInfoTx) Do(ctx context.Context) (res *types.GetOrdersInfoRespon
 		return nil, err
 	}
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.GetOrdersInfoResponse)
+	res := new(types.GetOrdersInfoResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
@@ -336,19 +329,18 @@ func (s *GetOrderInfoTx) Do(ctx context.Context) (res *types.GetOrdersInfoRespon
 	return res, nil
 }
 
-func (s *GetOrderInfoTx) validate() (err error) {
-	if s.order_hash != "" {
+func (s *GetOrderInfoTx) validate() error {
+	if s.orderHash != "" {
 		return nil
 	}
 	if s.symbol == "" {
-		return fmt.Errorf("invalid symbol")
+		return types.ErrSymbolMandatory
 	}
-	if s.order_id == "" {
-		return fmt.Errorf("invalid order_id")
+	if s.orderID == "" {
+		return types.ErrOrderIDMandatory
 	}
-	if s.order_side == "" {
-		return fmt.Errorf("invalid order_side")
+	if s.orderSide == "" {
+		return types.ErrInvalidOrderSide
 	}
 	return nil
-
 }

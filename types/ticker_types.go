@@ -4,15 +4,17 @@ import "github.com/bytedance/sonic"
 
 type TickerResponseAny map[string]TickerProperty
 
-func (t *TickerResponseAny) Compile() (res TickerResponse) {
+func (t *TickerResponseAny) Compile() *TickerResponse {
 	resultByte, err := sonic.Marshal(t)
+	res := new(TickerResponse)
 	if err != nil {
-		return TickerResponse{}
+		return &TickerResponse{}
 	}
-	err = sonic.Unmarshal(resultByte, &res)
+	err = sonic.Unmarshal(resultByte, res)
 	if err != nil {
-		return TickerResponse{}
+		return &TickerResponse{}
 	}
+
 	return res
 }
 

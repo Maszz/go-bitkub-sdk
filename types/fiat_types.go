@@ -1,7 +1,7 @@
 package types
 
 type FiatAccountPayload struct {
-	Ts  Timestamp `json:"ts,omitempty"`
+	TS  Timestamp `json:"ts,omitempty"`
 	Sig Signature `json:"sig,omitempty"`
 }
 
@@ -30,19 +30,19 @@ type FiatWithdrawResponse struct {
 		Amt float64 `json:"amt"`
 		Fee float64 `json:"fee"`
 		Rec float64 `json:"rec"`
-		Ts  int     `json:"ts"`
+		TS  int     `json:"ts"`
 	} `json:"result"`
 }
 
 type FiatWithdrawPayload struct {
-	Ts        Timestamp `json:"ts,omitempty"`
+	TS        Timestamp `json:"ts,omitempty"`
 	Sig       Signature `json:"sig,omitempty"`
-	FiatAccId string    `json:"id,omitempty"`
+	FiatAccID string    `json:"id,omitempty"`
 	Amount    float64   `json:"amt,omitempty"`
 }
 
 type GetFiatDepositsPayload struct {
-	Ts  Timestamp `json:"ts,omitempty"`
+	TS  Timestamp `json:"ts,omitempty"`
 	Sig Signature `json:"sig,omitempty"`
 }
 type GetFiatDepositsResponse struct {
@@ -63,7 +63,7 @@ type GetFiatDepositsResponse struct {
 }
 
 type GetFiatWithdrawsPayload struct {
-	Ts  Timestamp `json:"ts,omitempty"`
+	TS  Timestamp `json:"ts,omitempty"`
 	Sig Signature `json:"sig,omitempty"`
 }
 type GetFiatWithdrawsResponse struct {

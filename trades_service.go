@@ -1,7 +1,6 @@
 package bitkub
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/Maszz/go-bitkub-sdk/types"
@@ -26,8 +25,8 @@ func (s *GetTradesTx) Limit(limit int) *GetTradesTx {
 	return s
 }
 
-func (s *GetTradesTx) Do(ctx context.Context) (res *types.TradesResponse, err error) {
-	if err = s.validate(); err != nil {
+func (s *GetTradesTx) Do() (*types.TradesResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -37,22 +36,21 @@ func (s *GetTradesTx) Do(ctx context.Context) (res *types.TradesResponse, err er
 		endpoint: types.NewEndPoint(endpoint),
 		signed:   secTypeNone,
 	}
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.TradesResponse)
+	res := new(types.TradesResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
 	}
 
 	return res, nil
-
 }
 
 func (s *GetTradesTx) validate() error {
@@ -60,7 +58,7 @@ func (s *GetTradesTx) validate() error {
 		s.limit = 10
 	}
 	if s.symbol == "" {
-		return fmt.Errorf("symbol is mandatory")
+		return types.ErrSymbolMandatory
 	}
 
 	return nil

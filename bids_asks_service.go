@@ -1,7 +1,6 @@
 package bitkub
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/bytedance/sonic"
@@ -20,17 +19,18 @@ type GetBidsTx struct {
 
 func (s *GetBidsTx) Symbol(symbol types.Symbol) *GetBidsTx {
 	s.symbol = symbol
+
 	return s
 }
 
 func (s *GetBidsTx) Limit(limit int) *GetBidsTx {
 	s.limit = limit
+
 	return s
 }
 
-func (s *GetBidsTx) Do(ctx context.Context) (res *types.BidsAsksResponse, err error) {
-
-	if err = s.validate(); err != nil {
+func (s *GetBidsTx) Do() (*types.BidsAsksResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -41,15 +41,15 @@ func (s *GetBidsTx) Do(ctx context.Context) (res *types.BidsAsksResponse, err er
 		endpoint: types.NewEndPoint(endpoint),
 		signed:   secTypeNone,
 	}
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.BidsAsksResponse)
+	res := new(types.BidsAsksResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
@@ -63,8 +63,9 @@ func (s *GetBidsTx) validate() error {
 		s.limit = 10
 	}
 	if s.symbol == "" {
-		return fmt.Errorf("symbol is mandatory")
+		return types.ErrSymbolMandatory
 	}
+
 	return nil
 }
 
@@ -84,8 +85,8 @@ func (s *GetAsksTx) Limit(limit int) *GetAsksTx {
 	return s
 }
 
-func (s *GetAsksTx) Do(ctx context.Context) (res *types.BidsAsksResponse, err error) {
-	if err = s.validate(); err != nil {
+func (s *GetAsksTx) Do() (*types.BidsAsksResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -96,22 +97,21 @@ func (s *GetAsksTx) Do(ctx context.Context) (res *types.BidsAsksResponse, err er
 		endpoint: types.NewEndPoint(endpoint),
 		signed:   secTypeNone,
 	}
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.BidsAsksResponse)
+	res := new(types.BidsAsksResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
 	}
 
 	return res, nil
-
 }
 
 func (s *GetAsksTx) validate() error {
@@ -119,19 +119,19 @@ func (s *GetAsksTx) validate() error {
 		s.limit = 10
 	}
 	if s.symbol == "" {
-		return fmt.Errorf("symbol is mandatory")
+		return types.ErrSymbolMandatory
 	}
 
 	return nil
 }
 
 type PlaceBidTx struct {
-	c          *Client
-	symbol     types.Symbol
-	amount     float64
-	rate       float64
-	order_type types.OrderType
-	client_id  string
+	c         *Client
+	symbol    types.Symbol
+	amount    float64
+	rate      float64
+	orderType types.OrderType
+	clientID  string
 }
 
 func (s *PlaceBidTx) Symbol(symbol types.Symbol) *PlaceBidTx {
@@ -149,19 +149,18 @@ func (s *PlaceBidTx) Rate(rate float64) *PlaceBidTx {
 	return s
 }
 
-func (s *PlaceBidTx) OrderType(order_type types.OrderType) *PlaceBidTx {
-	s.order_type = order_type
+func (s *PlaceBidTx) OrderType(orderType types.OrderType) *PlaceBidTx {
+	s.orderType = orderType
 	return s
 }
 
-func (s *PlaceBidTx) ClientID(client_id string) *PlaceBidTx {
-	s.client_id = client_id
+func (s *PlaceBidTx) ClientID(clientID string) *PlaceBidTx {
+	s.clientID = clientID
 	return s
 }
 
-func (s *PlaceBidTx) Do(ctx context.Context) (res *types.PlaceBidAskResponse, err error) {
-
-	if err = s.validate(); err != nil {
+func (s *PlaceBidTx) Do() (*types.PlaceBidAskResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -173,12 +172,12 @@ func (s *PlaceBidTx) Do(ctx context.Context) (res *types.PlaceBidAskResponse, er
 
 	payload := types.PlaceBidAskPayload{
 
-		Ts:       utils.CurrentTimestamp(),
+		TS:       utils.CurrentTimestamp(),
 		Symbol:   s.symbol,
 		Amount:   s.amount,
 		Rate:     s.rate,
-		Type:     s.order_type,
-		ClientID: s.client_id,
+		Type:     s.orderType,
+		ClientID: s.clientID,
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
@@ -186,49 +185,48 @@ func (s *PlaceBidTx) Do(ctx context.Context) (res *types.PlaceBidAskResponse, er
 		return nil, err
 	}
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 
 	if err != nil {
 		return nil, err
 	}
 
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.PlaceBidAskResponse)
+	res := new(types.PlaceBidAskResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
 	}
 
 	return res, nil
-
 }
 
 func (s *PlaceBidTx) validate() error {
 	if s.symbol == "" {
-		return fmt.Errorf("symbol is mandatory")
+		return types.ErrSymbolMandatory
 	}
 	if s.amount == 0 {
-		return fmt.Errorf("amount is mandatory")
+		return types.ErrAmountMandatory
 	}
-	if s.rate == 0 && s.order_type != types.OrderTypeMarket {
-		return fmt.Errorf("rate is mandatory")
+	if s.rate == 0 && s.orderType != types.OrderTypeMarket {
+		return types.ErrRateMandatory
 	}
-	if s.order_type == "" {
-		return fmt.Errorf("order_type is mandatory")
+	if s.orderType == "" {
+		return types.ErrOrderTypeMandatory
 	}
 	return nil
 }
 
 type PlaceAskTx struct {
-	c          *Client
-	symbol     types.Symbol
-	amount     float64
-	rate       float64
-	order_type types.OrderType
-	client_id  string
+	c         *Client
+	symbol    types.Symbol
+	amount    float64
+	rate      float64
+	orderType types.OrderType
+	clientID  string
 }
 
 func (s *PlaceAskTx) Symbol(symbol types.Symbol) *PlaceAskTx {
@@ -246,18 +244,18 @@ func (s *PlaceAskTx) Rate(rate float64) *PlaceAskTx {
 	return s
 }
 
-func (s *PlaceAskTx) OrderType(order_type types.OrderType) *PlaceAskTx {
-	s.order_type = order_type
+func (s *PlaceAskTx) OrderType(orderType types.OrderType) *PlaceAskTx {
+	s.orderType = orderType
 	return s
 }
 
-func (s *PlaceAskTx) ClientID(client_id string) *PlaceAskTx {
-	s.client_id = client_id
+func (s *PlaceAskTx) ClientID(clientID string) *PlaceAskTx {
+	s.clientID = clientID
 	return s
 }
 
-func (s *PlaceAskTx) Do(ctx context.Context) (res *types.PlaceBidAskResponse, err error) {
-	if err = s.validate(); err != nil {
+func (s *PlaceAskTx) Do() (*types.PlaceBidAskResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -268,12 +266,12 @@ func (s *PlaceAskTx) Do(ctx context.Context) (res *types.PlaceBidAskResponse, er
 	}
 
 	payload := types.PlaceBidAskPayload{
-		Ts:       utils.CurrentTimestamp(),
+		TS:       utils.CurrentTimestamp(),
 		Symbol:   s.symbol,
 		Amount:   s.amount,
 		Rate:     s.rate,
-		Type:     s.order_type,
-		ClientID: s.client_id,
+		Type:     s.orderType,
+		ClientID: s.clientID,
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
@@ -281,38 +279,37 @@ func (s *PlaceAskTx) Do(ctx context.Context) (res *types.PlaceBidAskResponse, er
 		return nil, err
 	}
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 
 	if err != nil {
 		return nil, err
 	}
 
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.PlaceBidAskResponse)
+	res := new(types.PlaceBidAskResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
 	}
 
 	return res, nil
-
 }
 
 func (s *PlaceAskTx) validate() error {
 	if s.symbol == "" {
-		return fmt.Errorf("symbol is mandatory")
+		return types.ErrSymbolMandatory
 	}
 	if s.amount <= 0 {
-		return fmt.Errorf("invalid amount")
+		return types.ErrAmountMandatory
 	}
-	if s.rate == 0 && s.order_type != types.OrderTypeMarket {
-		return fmt.Errorf("rate is mandatory")
+	if s.rate == 0 && s.orderType != types.OrderTypeMarket {
+		return types.ErrRateMandatory
 	}
-	if s.order_type == "" {
-		return fmt.Errorf("order_type is mandatory")
+	if s.orderType == "" {
+		return types.ErrOrderTypeMandatory
 	}
 	return nil
 }

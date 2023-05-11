@@ -1,10 +1,10 @@
 package bitkub
 
 import (
-	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -12,7 +12,7 @@ import (
 
 	"github.com/bytedance/sonic"
 
-	"github.com/Maszz/go-bitkub-sdk/utils/http_client"
+	"github.com/Maszz/go-bitkub-sdk/utils/httpclient"
 
 	"github.com/Maszz/go-bitkub-sdk/types"
 
@@ -24,7 +24,7 @@ type Client struct {
 	SecretKey  string
 	BaseURL    string
 	UserAgent  string
-	HTTPClient *http_client.HttpClient
+	HTTPClient *httpclient.HTTPClient
 	Debug      bool
 	Logger     *log.Logger
 	TimeOffset int64
@@ -34,9 +34,11 @@ type Client struct {
 Not tested how Big Struct will affect performance.
 */
 func init() {
-	fmt.Println("warmup")
 	var v types.TickerResponse
-	sonic.Pretouch(reflect.TypeOf(v))
+	err := sonic.Pretouch(reflect.TypeOf(v))
+	if err != nil {
+		panic(err)
+	}
 }
 
 func NewClient(apiKey, secretKey string) *Client {
@@ -47,7 +49,7 @@ func NewClient(apiKey, secretKey string) *Client {
 		SecretKey:  secretKey,
 		BaseURL:    types.BaseAPIMainURL,
 		UserAgent:  "Bitkub-sdk/golang",
-		HTTPClient: http_client.NewHttpClient(),
+		HTTPClient: httpclient.NewHTTPClient(),
 		Logger:     log.New(os.Stderr, "Bitkub-golang ", log.LstdFlags),
 	}
 }
@@ -66,7 +68,7 @@ func (c *Client) signPayload(payload interface{}) string {
 	return hmacSignedStr
 }
 
-func (c *Client) parseRequest(r *request) (err error) {
+func (c *Client) parseRequest(r *request) {
 	// do hmac and sign payload + cal payload stuff.
 	urlWithBase := fmt.Sprintf("%s%s", c.BaseURL, r.endpoint)
 	headers := &fasthttp.RequestHeader{}
@@ -80,47 +82,46 @@ func (c *Client) parseRequest(r *request) (err error) {
 	}
 
 	headers.Set("User-Agent", c.UserAgent)
-	r.fullUrl = urlWithBase
-	fmt.Println("full url", r.fullUrl)
+	r.fullURL = urlWithBase
+	fmt.Println("full url", r.fullURL)
 	r.headers = headers
-
-	return nil
-
 }
 
-func (c *Client) callAPI(ctx context.Context, r *request) (data []byte, err error) {
-	err = c.parseRequest(r)
-	if err != nil {
-		return []byte{}, err
-	}
-	// tranform request object to fasthttp request object
-	fmt.Println("calling api", r.query.String())
-	req := c.HTTPClient.DoRequest(r.fullUrl, r.method, r.body, r.headers)
+func (c *Client) callAPI(r *request) ([]byte, error) {
+	c.parseRequest(r)
+
+	// transform request object to fasthttp request object
+	// fmt.Println("calling api", r.query.String())
+	req, err := c.HTTPClient.DoRequest(r.fullURL, r.method, r.body, r.headers)
 	// parse only error response
+	if err != nil {
+		return nil, err
+	}
 
-	return req, err
+	return req, nil
 }
 
-func (c *Client) parseError(data []byte) types.ApiError {
-	var errResp types.ApiResponseError
+func (c *Client) parseError(data []byte) types.APIError {
+	var errResp types.APIResponseError
 	err := sonic.Unmarshal(data, &errResp)
 	if err != nil {
-		return types.ApiError{ErrorId: -1, ErrorDesc: "Unmarshal error"}
+		return types.APIError{ErrorID: -1, ErrorDesc: "Unmarshal error"}
 	}
 
 	if errResp.Error == 0 {
-		return types.ApiError{ErrorId: 0, ErrorDesc: types.BitkubApiErrors[types.ApiNoError]}
+		return types.APIError{ErrorID: 0, ErrorDesc: types.BitkubAPIErrors[types.APINoError]}
 	}
 
-	errMessage := types.BitkubApiErrors[errResp.Error]
+	errMessage := types.BitkubAPIErrors[errResp.Error]
 
-	return types.ApiError{ErrorId: errResp.Error, ErrorDesc: errMessage}
+	return types.APIError{ErrorID: errResp.Error, ErrorDesc: errMessage}
 }
 
-func (c *Client) catchApiError(data []byte) error {
+func (c *Client) catchAPIError(data []byte) error {
 	err := c.parseError(data)
-	if err.ErrorId != 0 {
-		return fmt.Errorf("error id: %d, error message: %s", err.ErrorId, err.ErrorDesc)
+	if err.ErrorID != 0 {
+		errMsg := fmt.Sprintf("error id: %d, error message: %s", err.ErrorID, err.ErrorDesc)
+		return errors.New(errMsg)
 	}
 	return nil
 }
@@ -206,14 +207,14 @@ func (c *Client) NewGetCryptoAddressesTx() *GetCryptoAddressesTx {
 /*
 Function to Withdraw Crypto to specific address
 
-Paramiters Description:
-  - Address : Address of receiver
-  - Amount : Amount of crypto to withdraw
-  - Currency : Currency of crypto to withdraw
-  - Memo(Optional) : Memo of crypto to withdraw
-  - Network : Network of crypto to withdraw
+Parameters Description:
+  - Address(string) : Address of receiver
+  - Amount(float64) : Amount of crypto to withdraw
+  - Currency(string) : Currency of crypto to withdraw
+  - Memo(Optional[string]) : Memo of crypto to withdraw
+  - Network(types.BlockChainNetwork) : Network of crypto to withdraw
 
-Paramiters Should be set before call Do() function:
+Parameters Should be set before call Do() function:
 
 	func (*CryptoWithdrawTx) Address(address string)
 	func (*CryptoWithdrawTx) Amount(amount float64)
@@ -234,11 +235,11 @@ func (c *Client) NewCryptoWithdrawTx() *CryptoWithdrawTx {
 /*
 Function to Get History Crypto Deposit Transaction
 
-Paramiters Description:
+Parameters Description:
   - Page : Page of result
   - Limit : Limit of result
 
-Paramiters Should be set before call Do() function:
+Parameters Should be set before call Do() function:
 
 	func (*GetCryptoDepositTx) Page(page int)
 	func (*GetCryptoDepositTx) Limit(limit int)
@@ -255,11 +256,11 @@ func (c *Client) NewGetCryptoDepositTx() *GetCryptoDepositTx {
 /*
 Function to Get History Crypto Withdraw Transaction
 
-Paramiters Description:
-  - Page : Page of result
-  - Limit : Limit of result
+Parameters Description:
+  - Page(int) : Page of result
+  - Limit(int) : Limit of result
 
-Paramiters Should be set before call Do() function:
+Parameters Should be set before call Do() function:
 
 	func (*GetCryptoWithdrawTx) Page(page int)
 	func (*GetCryptoWithdrawTx) Limit(limit int)

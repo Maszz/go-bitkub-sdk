@@ -1,22 +1,23 @@
 package types
 
+import "errors"
+
 type EndPointType string
 type OrderType string
 type OrderSide string
 type BlockChainNetwork string
-type OrderId string // After April 19th, 2023 at 18:00PM(GMT+7) Response Field id, first, parent, last change type from Integer to String.
+type OrderID string // After April 19th, 2023 at 18:00PM(GMT+7) Response Field id, first, parent, last change type from Integer to String.
 type OrderHash string
 type Symbol string
 type Timestamp int64
 type Signature string
-type BitKubApiError int //
+type BitKubAPIError int //
 
 func (s Symbol) String() string {
 	return string(s)
 }
 
 func NewEndPoint(endpoint string) EndPointType {
-
 	return EndPointType(endpoint)
 }
 
@@ -87,12 +88,12 @@ const (
 
 type TimeResolution string
 
-type ApiResponseError struct {
-	Error BitKubApiError `json:"error"`
+type APIResponseError struct {
+	Error BitKubAPIError `json:"error"`
 }
 
-type ApiError struct {
-	ErrorId   BitKubApiError `json:"error"`
+type APIError struct {
+	ErrorID   BitKubAPIError `json:"error"`
 	ErrorDesc string         `json:"error_description"`
 }
 
@@ -101,110 +102,127 @@ func (t TimeResolution) String() string {
 }
 
 const (
-	Time_1m   TimeResolution = "1"
-	Time_5m   TimeResolution = "5"
-	Time_15m  TimeResolution = "15"
-	Time_1h   TimeResolution = "60"
-	Time_240m TimeResolution = "240"
-	Time_1d   TimeResolution = "D"
+	Time1m   TimeResolution = "1"
+	Time5m   TimeResolution = "5"
+	Time15m  TimeResolution = "15"
+	Time1h   TimeResolution = "60"
+	Time240m TimeResolution = "240"
+	Time1d   TimeResolution = "D"
+)
+
+var (
+	ErrSymbolMandatory      = errors.New("symbol is mandatory")
+	ErrAmountMandatory      = errors.New("amount is mandatory")
+	ErrAmountMustBePositive = errors.New("amount must be positive")
+	ErrRateMandatory        = errors.New("rate is mandatory")
+	ErrOrderTypeMandatory   = errors.New("order type is mandatory")
+	ErrPageMustBePositive   = errors.New("page must be positive")
+	ErrLimitMustBePositive  = errors.New("limit must be positive")
+	ErrCurrencyMandatory    = errors.New("currency is mandatory")
+	ErrAddressMandatory     = errors.New("address is mandatory")
+	ErrNetworkMandatory     = errors.New("network is mandatory")
+	ErrFiatAccIDMandatory   = errors.New("fiat account id is mandatory")
+	ErrInvalidOrderSide     = errors.New("invalid order side")
+	ErrOrderIDMandatory     = errors.New("order id is mandatory")
+	ErrInvalidTimeStamp     = errors.New("invalid timestamp")
 )
 
 const (
-	ApiNoError BitKubApiError = iota
-	ApiInvalidJson
-	ApiMissingApiKey
-	ApiInvalidApiKey
-	ApiPendingForActivation
-	ApiIpNotAllowed
-	ApiInvalidSignature
-	ApiMissingTimeStamp
-	ApiInvalidTimeStamp
-	ApiInvalidUser
-	ApiInvalidParamiter
-	ApiInvalidSymbol
-	ApiInvalidAmount
-	ApiInvalidPrice
-	ApiImproperRate
-	ApiAmountTooLow
-	ApiFailedToGetBalance
-	ApiEmptyWallet
-	ApiInsufficientBalance
-	ApiInsertOrderFailed
-	ApiDeductBalanceFailed
-	ApiInvalidOrderForCancellation
-	ApiInvalidSide
-	ApiUpdateOrderStatusFailed
-	ApiInvalidOrderForLookup
-	ApiKYCRequired
-	ApiLimitExceeded         BitKubApiError = 30
-	ApiPendingWidrawalExists BitKubApiError = iota + 13
-	ApiInvalidCurrencyForWithdrawal
-	ApiAddressIsNotWhitelisted
-	ApiDeductCryptoFailed
-	ApiCreateWidthdrawalRecordFailed
-	ApiNonceHasToBeNumeric
-	ApiInvalidNonce
-	ApiWithdrawalLimitExceeded
-	ApiInvalidBankAccount
-	ApiBankLimitExceeded
-	ApiPendingWitdrawalExists
-	ApiWitdrawalUnderMaintenance
-	ApiInvalidPermission
-	ApiInvalidInternalAddress
-	ApiAddressDepreciated
-	ApiCancelOnlyMode
-	ApiUserSuspendedFromPurchasing
-	ApiUserSuspendedFromSelling
-	ApiServerError = 90
+	APINoError BitKubAPIError = iota
+	APIInvalidJSON
+	APIMissingAPIKey
+	APIInvalidAPIKey
+	APIPendingForActivation
+	APIIpNotAllowed
+	APIInvalidSignature
+	APIMissingTimeStamp
+	APIInvalidTimeStamp
+	APIInvalidUser
+	APIInvalidParamiter
+	APIInvalidSymbol
+	APIInvalidAmount
+	APIInvalidPrice
+	APIImproperRate
+	APIAmountTooLow
+	APIFailedToGetBalance
+	APIEmptyWallet
+	APIInsufficientBalance
+	APIInsertOrderFailed
+	APIDeductBalanceFailed
+	APIInvalidOrderForCancellation
+	APIInvalidSide
+	APIUpdateOrderStatusFailed
+	APIInvalidOrderForLookup
+	APIKYCRequired
+	APILimitExceeded         BitKubAPIError = 30
+	APIPendingWidrawalExists BitKubAPIError = iota + 13
+	APIInvalidCurrencyForWithdrawal
+	APIAddressIsNotWhitelisted
+	APIDeductCryptoFailed
+	APICreateWidthdrawalRecordFailed
+	APINonceHasToBeNumeric
+	APIInvalidNonce
+	APIWithdrawalLimitExceeded
+	APIInvalidBankAccount
+	APIBankLimitExceeded
+	APIPendingWitdrawalExists
+	APIWitdrawalUnderMaintenance
+	APIInvalidPermission
+	APIInvalidInternalAddress
+	APIAddressDepreciated
+	APICancelOnlyMode
+	APIUserSuspendedFromPurchasing
+	APIUserSuspendedFromSelling
+	APIServerError = 90
 )
 
 /* Work In progress Alot of miss information from APi document*/
 
-var BitkubApiErrors = map[BitKubApiError]string{
-	ApiNoError:                       "No Error",
-	ApiInvalidJson:                   "Invalid JSON payload",
-	ApiMissingApiKey:                 "Missing X-BTK-APIKEY",
-	ApiInvalidApiKey:                 "Invalid API key",
-	ApiPendingForActivation:          "API pending for activation",
-	ApiIpNotAllowed:                  "IP not allowed",
-	ApiInvalidSignature:              "Missing / Invalid signature",
-	ApiMissingTimeStamp:              "Missing timestamp",
-	ApiInvalidTimeStamp:              "Invalid timestamp",
-	ApiInvalidUser:                   "Invalid user",
-	ApiInvalidParamiter:              "Invalid parameter",
-	ApiInvalidSymbol:                 "Invalid symbol",
-	ApiInvalidAmount:                 "Invalid amount",
-	ApiInvalidPrice:                  "Invalid price",
-	ApiImproperRate:                  "Improper rate",
-	ApiAmountTooLow:                  "Amount too low",
-	ApiFailedToGetBalance:            "Failed to get balance",
-	ApiEmptyWallet:                   "Wallet is empty",
-	ApiInsufficientBalance:           "Insufficient balance",
-	ApiInsertOrderFailed:             "Failed to insert order into db",
-	ApiDeductBalanceFailed:           "Failed to deduct balance",
-	ApiInvalidOrderForCancellation:   "Invalid order for cancellation",
-	ApiInvalidSide:                   "Invalid side",
-	ApiUpdateOrderStatusFailed:       "Failed to update order status",
-	ApiInvalidOrderForLookup:         "Invalid order for lookup",
-	ApiKYCRequired:                   "KYC level 1 is required to proceed",
-	ApiLimitExceeded:                 "Limit exceeded",
-	ApiPendingWidrawalExists:         "Pending withdrawal exists",
-	ApiInvalidCurrencyForWithdrawal:  "Invalid currency for withdrawal",
-	ApiAddressIsNotWhitelisted:       "Address is not whitelisted",
-	ApiDeductCryptoFailed:            "Failed to deduct crypto",
-	ApiCreateWidthdrawalRecordFailed: "Failed to create withdrawal record",
-	ApiNonceHasToBeNumeric:           "Nonce has to be numeric",
-	ApiInvalidNonce:                  "Invalid nonce",
-	ApiWithdrawalLimitExceeded:       "Withdrawal limit exceeded",
-	ApiInvalidBankAccount:            "Invalid bank account",
-	ApiBankLimitExceeded:             "Bank limit exceeded",
-	ApiPendingWitdrawalExists:        "Pending withdrawal exists",
-	ApiWitdrawalUnderMaintenance:     "Withdrawal is under maintenance",
-	ApiInvalidPermission:             "Invalid permission",
-	ApiInvalidInternalAddress:        "Invalid internal address",
-	ApiAddressDepreciated:            "Address has been depreciated",
-	ApiCancelOnlyMode:                "Cancel only mode",
-	ApiUserSuspendedFromPurchasing:   "User has been suspended from purchasing",
-	ApiUserSuspendedFromSelling:      "User has been suspended from selling",
-	ApiServerError:                   "Server error",
+var BitkubAPIErrors = map[BitKubAPIError]string{
+	APINoError:                       "No Error",
+	APIInvalidJSON:                   "Invalid JSON payload",
+	APIMissingAPIKey:                 "Missing X-BTK-APIKEY",
+	APIInvalidAPIKey:                 "Invalid API key",
+	APIPendingForActivation:          "API pending for activation",
+	APIIpNotAllowed:                  "IP not allowed",
+	APIInvalidSignature:              "Missing / Invalid signature",
+	APIMissingTimeStamp:              "Missing timestamp",
+	APIInvalidTimeStamp:              "Invalid timestamp",
+	APIInvalidUser:                   "Invalid user",
+	APIInvalidParamiter:              "Invalid parameter",
+	APIInvalidSymbol:                 "Invalid symbol",
+	APIInvalidAmount:                 "Invalid amount",
+	APIInvalidPrice:                  "Invalid price",
+	APIImproperRate:                  "Improper rate",
+	APIAmountTooLow:                  "Amount too low",
+	APIFailedToGetBalance:            "Failed to get balance",
+	APIEmptyWallet:                   "Wallet is empty",
+	APIInsufficientBalance:           "Insufficient balance",
+	APIInsertOrderFailed:             "Failed to insert order into db",
+	APIDeductBalanceFailed:           "Failed to deduct balance",
+	APIInvalidOrderForCancellation:   "Invalid order for cancellation",
+	APIInvalidSide:                   "Invalid side",
+	APIUpdateOrderStatusFailed:       "Failed to update order status",
+	APIInvalidOrderForLookup:         "Invalid order for lookup",
+	APIKYCRequired:                   "KYC level 1 is required to proceed",
+	APILimitExceeded:                 "Limit exceeded",
+	APIPendingWidrawalExists:         "Pending withdrawal exists",
+	APIInvalidCurrencyForWithdrawal:  "Invalid currency for withdrawal",
+	APIAddressIsNotWhitelisted:       "Address is not whitelisted",
+	APIDeductCryptoFailed:            "Failed to deduct crypto",
+	APICreateWidthdrawalRecordFailed: "Failed to create withdrawal record",
+	APINonceHasToBeNumeric:           "Nonce has to be numeric",
+	APIInvalidNonce:                  "Invalid nonce",
+	APIWithdrawalLimitExceeded:       "Withdrawal limit exceeded",
+	APIInvalidBankAccount:            "Invalid bank account",
+	APIBankLimitExceeded:             "Bank limit exceeded",
+	APIPendingWitdrawalExists:        "Pending withdrawal exists",
+	APIWitdrawalUnderMaintenance:     "Withdrawal is under maintenance",
+	APIInvalidPermission:             "Invalid permission",
+	APIInvalidInternalAddress:        "Invalid internal address",
+	APIAddressDepreciated:            "Address has been depreciated",
+	APICancelOnlyMode:                "Cancel only mode",
+	APIUserSuspendedFromPurchasing:   "User has been suspended from purchasing",
+	APIUserSuspendedFromSelling:      "User has been suspended from selling",
+	APIServerError:                   "Server error",
 }

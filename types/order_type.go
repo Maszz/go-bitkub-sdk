@@ -1,10 +1,10 @@
 package types
 
 type CancelOrderPayload struct {
-	Ts        Timestamp `json:"ts,omitempty"`
+	TS        Timestamp `json:"ts,omitempty"`
 	Sig       Signature `json:"sig,omitempty"`
 	Symbol    Symbol    `json:"sym"`
-	OrderID   OrderId   `json:"id"` // OrderID is string in cancel order payload
+	OrderID   OrderID   `json:"id"` // OrderID is string in cancel order payload
 	OrderSide OrderSide `json:"sd"`
 	OrderHash OrderHash `json:"hash"`
 }
@@ -14,7 +14,7 @@ type CancelOrderResponse struct {
 }
 
 type GetOpenOrdersPayload struct {
-	Ts     Timestamp `json:"ts,omitempty"`
+	TS     Timestamp `json:"ts,omitempty"`
 	Sig    Signature `json:"sig,omitempty"`
 	Symbol Symbol    `json:"sym"`
 }
@@ -34,12 +34,12 @@ type GetOpenOrdersResponse struct {
 		ParentID string  `json:"parent_id"`
 		SuperID  string  `json:"super_id"`
 		ClientID string  `json:"client_id"`
-		Ts       int     `json:"ts"`
+		TS       int     `json:"ts"`
 	} `json:"result"`
 }
 
 type GetOrderHistoryPayload struct {
-	Ts     Timestamp `json:"ts,omitempty"`
+	TS     Timestamp `json:"ts,omitempty"`
 	Sig    Signature `json:"sig,omitempty"`
 	Symbol Symbol    `json:"sym"`
 	Page   int       `json:"page,omitempty"`
@@ -66,7 +66,7 @@ type GetOrderHistoryResponse struct {
 		Fee             string `json:"fee"`
 		Credit          string `json:"credit"`
 		Amount          string `json:"amount"`
-		Ts              int    `json:"ts"`
+		TS              int    `json:"ts"`
 		Date            string `json:"date"`
 	} `json:"result"`
 	Pagination struct {
@@ -77,10 +77,10 @@ type GetOrderHistoryResponse struct {
 	} `json:"pagination"`
 }
 type GetOrdersInfoPayload struct {
-	Ts        Timestamp `json:"ts,omitempty"`
+	TS        Timestamp `json:"ts,omitempty"`
 	Sig       Signature `json:"sig,omitempty"`
 	Symbol    Symbol    `json:"sym"`
-	OrderID   OrderId   `json:"id"` // OrderId is a string in this case **
+	OrderID   OrderID   `json:"id"` // OrderId is a string in this case **
 	OrderSide OrderSide `json:"sd"`
 	OrderHash OrderHash `json:"hash,omitempty"`
 }

@@ -1,8 +1,6 @@
 package bitkub
 
 import (
-	"context"
-
 	"github.com/bytedance/sonic"
 
 	"github.com/Maszz/go-bitkub-sdk/utils"
@@ -15,7 +13,7 @@ type GetBalancesTx struct {
 	c *Client
 }
 
-func (s *GetBalancesTx) Do(ctx context.Context) (res *types.BalancesResponse, err error) {
+func (s *GetBalancesTx) Do() (*types.BalancesResponse, error) {
 	r := &request{
 		method:   fasthttp.MethodPost,
 		endpoint: types.MarketBalancesEndpoint,
@@ -25,7 +23,7 @@ func (s *GetBalancesTx) Do(ctx context.Context) (res *types.BalancesResponse, er
 		// do hmac and sign payload + cal payload stuff.
 	*/
 	payload := types.BalancesPayload{
-		Ts: utils.CurrentTimestamp(),
+		TS: utils.CurrentTimestamp(),
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
@@ -34,16 +32,16 @@ func (s *GetBalancesTx) Do(ctx context.Context) (res *types.BalancesResponse, er
 	}
 
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.BalancesResponse)
+	res := new(types.BalancesResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
@@ -52,7 +50,7 @@ func (s *GetBalancesTx) Do(ctx context.Context) (res *types.BalancesResponse, er
 	return res, nil
 }
 
-func (s *GetBalancesTx) DoAny(ctx context.Context) (res *types.BalancesResponseAny, err error) {
+func (s *GetBalancesTx) DoAny() (*types.BalancesResponseAny, error) {
 	r := &request{
 		method:   fasthttp.MethodPost,
 		endpoint: types.MarketBalancesEndpoint,
@@ -62,7 +60,7 @@ func (s *GetBalancesTx) DoAny(ctx context.Context) (res *types.BalancesResponseA
 		// do hmac and sign payload + cal payload stuff.
 	*/
 	payload := types.BalancesPayload{
-		Ts: utils.CurrentTimestamp(),
+		TS: utils.CurrentTimestamp(),
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
@@ -71,16 +69,16 @@ func (s *GetBalancesTx) DoAny(ctx context.Context) (res *types.BalancesResponseA
 	}
 
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
-		return res, respErr
+		return nil, respErr
 	}
-	res = new(types.BalancesResponseAny)
+	res := new(types.BalancesResponseAny)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err

@@ -1,7 +1,6 @@
 package bitkub
 
 import (
-	"context"
 	"fmt"
 	"strconv"
 
@@ -28,8 +27,8 @@ func (s *GetCryptoAddressesTx) Limit(limit int) *GetCryptoAddressesTx {
 	return s
 }
 
-func (s *GetCryptoAddressesTx) Do(ctx context.Context) (res *types.CryptoAddressesResponse, err error) {
-	if err = s.validate(); err != nil {
+func (s *GetCryptoAddressesTx) Do() (*types.CryptoAddressesResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -42,7 +41,7 @@ func (s *GetCryptoAddressesTx) Do(ctx context.Context) (res *types.CryptoAddress
 	}
 
 	payload := types.CryptoAddressesPayload{
-		Ts: utils.CurrentTimestamp(),
+		TS: utils.CurrentTimestamp(),
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
@@ -50,15 +49,15 @@ func (s *GetCryptoAddressesTx) Do(ctx context.Context) (res *types.CryptoAddress
 		return nil, err
 	}
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.CryptoAddressesResponse)
+	res := new(types.CryptoAddressesResponse)
 	if s.hasAllQuery {
 		err = s.tranformHasAllQueryResponse(data, res)
 		if err != nil {
@@ -73,15 +72,14 @@ func (s *GetCryptoAddressesTx) Do(ctx context.Context) (res *types.CryptoAddress
 	}
 
 	return res, nil
-
 }
 
-func (s *GetCryptoAddressesTx) validate() (err error) {
+func (s *GetCryptoAddressesTx) validate() error {
 	if s.page < 0 {
-		return fmt.Errorf("page must be positive number")
+		return types.ErrPageMustBePositive
 	}
 	if s.limit < 0 {
-		return fmt.Errorf("limit must be positive number")
+		return types.ErrLimitMustBePositive
 	}
 	return nil
 }
@@ -106,9 +104,9 @@ func (s *GetCryptoAddressesTx) urlBuilder() string {
 	return url
 }
 
-func (s *GetCryptoAddressesTx) tranformHasAllQueryResponse(data []byte, res *types.CryptoAddressesResponse) (err error) {
+func (s *GetCryptoAddressesTx) tranformHasAllQueryResponse(data []byte, res *types.CryptoAddressesResponse) error {
 	resWithAllQuery := &types.CryptoAddressesResponseWithAllQuery{}
-	err = sonic.Unmarshal(data, resWithAllQuery)
+	err := sonic.Unmarshal(data, resWithAllQuery)
 	if err != nil {
 		return err
 	}
@@ -127,7 +125,6 @@ func (s *GetCryptoAddressesTx) tranformHasAllQueryResponse(data []byte, res *typ
 	}
 	res.Pagination.Page = page
 	return nil
-
 }
 
 type CryptoWithdrawTx struct {
@@ -164,9 +161,8 @@ func (s *CryptoWithdrawTx) Network(network types.BlockChainNetwork) *CryptoWithd
 	return s
 }
 
-func (s *CryptoWithdrawTx) Do(ctx context.Context) (res *types.CryptoWithdrawResponse, err error) {
-
-	if err = s.validate(); err != nil {
+func (s *CryptoWithdrawTx) Do() (*types.CryptoWithdrawResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -177,7 +173,7 @@ func (s *CryptoWithdrawTx) Do(ctx context.Context) (res *types.CryptoWithdrawRes
 	}
 
 	payload := types.CryptoWithdrawPayload{
-		Ts:      utils.CurrentTimestamp(),
+		TS:      utils.CurrentTimestamp(),
 		Cur:     s.cur,
 		Amount:  s.amount,
 		Address: s.address,
@@ -191,16 +187,16 @@ func (s *CryptoWithdrawTx) Do(ctx context.Context) (res *types.CryptoWithdrawRes
 		return nil, err
 	}
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.CryptoWithdrawResponse)
+	res := new(types.CryptoWithdrawResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
@@ -209,18 +205,18 @@ func (s *CryptoWithdrawTx) Do(ctx context.Context) (res *types.CryptoWithdrawRes
 	return res, nil
 }
 
-func (s *CryptoWithdrawTx) validate() (err error) {
+func (s *CryptoWithdrawTx) validate() error {
 	if s.cur == "" {
-		return fmt.Errorf("currency is required")
+		return types.ErrCurrencyMandatory
 	}
 	if s.amount <= 0 {
-		return fmt.Errorf("amount must be positive number")
+		return types.ErrAmountMustBePositive
 	}
 	if s.address == "" {
-		return fmt.Errorf("address is required")
+		return types.ErrAddressMandatory
 	}
 	if s.network == "" {
-		return fmt.Errorf("network is required")
+		return types.ErrNetworkMandatory
 	}
 	return nil
 }
@@ -241,8 +237,8 @@ func (s *GetCryptoDepositTx) Limit(limit int) *GetCryptoDepositTx {
 	return s
 }
 
-func (s *GetCryptoDepositTx) Do(ctx context.Context) (res *types.GetCryptoDepositResponse, err error) {
-	if err = s.validate(); err != nil {
+func (s *GetCryptoDepositTx) Do() (*types.GetCryptoDepositResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -255,7 +251,7 @@ func (s *GetCryptoDepositTx) Do(ctx context.Context) (res *types.GetCryptoDeposi
 	}
 
 	payload := types.GetCryptoDepositPayload{
-		Ts: utils.CurrentTimestamp(),
+		TS: utils.CurrentTimestamp(),
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
@@ -263,15 +259,15 @@ func (s *GetCryptoDepositTx) Do(ctx context.Context) (res *types.GetCryptoDeposi
 		return nil, err
 	}
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.GetCryptoDepositResponse)
+	res := new(types.GetCryptoDepositResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
@@ -280,12 +276,12 @@ func (s *GetCryptoDepositTx) Do(ctx context.Context) (res *types.GetCryptoDeposi
 	return res, nil
 }
 
-func (s *GetCryptoDepositTx) validate() (err error) {
+func (s *GetCryptoDepositTx) validate() error {
 	if s.page < 0 {
-		return fmt.Errorf("page must be positive number")
+		return types.ErrPageMustBePositive
 	}
 	if s.limit < 0 {
-		return fmt.Errorf("limit must be positive number")
+		return types.ErrLimitMustBePositive
 	}
 	return nil
 }
@@ -305,7 +301,6 @@ func (s *GetCryptoDepositTx) urlBuilder() string {
 	}
 
 	return url
-
 }
 
 type GetCryptoWithdrawTx struct {
@@ -324,8 +319,8 @@ func (s *GetCryptoWithdrawTx) Limit(limit int) *GetCryptoWithdrawTx {
 	return s
 }
 
-func (s *GetCryptoWithdrawTx) Do(ctx context.Context) (res *types.GetCryptoWithdrawResponse, err error) {
-	if err = s.validate(); err != nil {
+func (s *GetCryptoWithdrawTx) Do() (*types.GetCryptoWithdrawResponse, error) {
+	if err := s.validate(); err != nil {
 		return nil, err
 	}
 
@@ -338,7 +333,7 @@ func (s *GetCryptoWithdrawTx) Do(ctx context.Context) (res *types.GetCryptoWithd
 	}
 
 	payload := types.GetCryptoWithdrawPayload{
-		Ts: utils.CurrentTimestamp(),
+		TS: utils.CurrentTimestamp(),
 	}
 	payload.Sig = types.Signature(s.c.signPayload(payload))
 	byteBody, err := sonic.Marshal(payload)
@@ -346,15 +341,15 @@ func (s *GetCryptoWithdrawTx) Do(ctx context.Context) (res *types.GetCryptoWithd
 		return nil, err
 	}
 	r.body = byteBody
-	data, err := s.c.callAPI(ctx, r)
+	data, err := s.c.callAPI(r)
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchApiError(data)
+	respErr := s.c.catchAPIError(data)
 	if respErr != nil {
 		return nil, respErr
 	}
-	res = new(types.GetCryptoWithdrawResponse)
+	res := new(types.GetCryptoWithdrawResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
 		return nil, err
@@ -363,12 +358,12 @@ func (s *GetCryptoWithdrawTx) Do(ctx context.Context) (res *types.GetCryptoWithd
 	return res, nil
 }
 
-func (s *GetCryptoWithdrawTx) validate() (err error) {
+func (s *GetCryptoWithdrawTx) validate() error {
 	if s.page < 0 {
-		return fmt.Errorf("page must be positive number")
+		return types.ErrPageMustBePositive
 	}
 	if s.limit < 0 {
-		return fmt.Errorf("limit must be positive number")
+		return types.ErrLimitMustBePositive
 	}
 	return nil
 }
