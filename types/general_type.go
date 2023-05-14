@@ -111,20 +111,25 @@ const (
 )
 
 var (
-	ErrSymbolMandatory      = errors.New("symbol is mandatory")
-	ErrAmountMandatory      = errors.New("amount is mandatory")
-	ErrAmountMustBePositive = errors.New("amount must be positive")
-	ErrRateMandatory        = errors.New("rate is mandatory")
-	ErrOrderTypeMandatory   = errors.New("order type is mandatory")
-	ErrPageMustBePositive   = errors.New("page must be positive")
-	ErrLimitMustBePositive  = errors.New("limit must be positive")
-	ErrCurrencyMandatory    = errors.New("currency is mandatory")
-	ErrAddressMandatory     = errors.New("address is mandatory")
-	ErrNetworkMandatory     = errors.New("network is mandatory")
-	ErrFiatAccIDMandatory   = errors.New("fiat account id is mandatory")
-	ErrInvalidOrderSide     = errors.New("invalid order side")
-	ErrOrderIDMandatory     = errors.New("order id is mandatory")
-	ErrInvalidTimeStamp     = errors.New("invalid timestamp")
+	TimeResolutions = []TimeResolution{Time1m, Time5m, Time15m, Time1h, Time240m, Time1d}
+)
+
+var (
+	ErrSymbolMandatory       = errors.New("symbol is mandatory")
+	ErrAmountMandatory       = errors.New("amount is mandatory")
+	ErrAmountMustBePositive  = errors.New("amount must be positive")
+	ErrRateMandatory         = errors.New("rate is mandatory")
+	ErrOrderTypeMandatory    = errors.New("order type is mandatory")
+	ErrPageMustBePositive    = errors.New("page must be positive")
+	ErrLimitMustBePositive   = errors.New("limit must be positive")
+	ErrCurrencyMandatory     = errors.New("currency is mandatory")
+	ErrAddressMandatory      = errors.New("address is mandatory")
+	ErrNetworkMandatory      = errors.New("network is mandatory")
+	ErrFiatAccIDMandatory    = errors.New("fiat account id is mandatory")
+	ErrInvalidOrderSide      = errors.New("invalid order side")
+	ErrOrderIDMandatory      = errors.New("order id is mandatory")
+	ErrInvalidTimeStamp      = errors.New("invalid timestamp")
+	ErrInvalidTimeResolution = errors.New("invalid time resolution string")
 )
 
 const (

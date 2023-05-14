@@ -36,22 +36,6 @@ func (s *GetTradingViewHistoryTx) ToCurrent() *GetTradingViewHistoryTx {
 	return s
 }
 func (s *GetTradingViewHistoryTx) Resolution(resolution types.TimeResolution) *GetTradingViewHistoryTx {
-	switch resolution {
-	case types.Time1m:
-		s.resolution = types.Time1m
-	case types.Time5m:
-		s.resolution = types.Time5m
-	case types.Time15m:
-		s.resolution = types.Time15m
-	case types.Time1h:
-		s.resolution = types.Time1h
-	case types.Time240m:
-		s.resolution = types.Time240m
-	case types.Time1d:
-		s.resolution = types.Time1d
-	default:
-		panic("Invalid resolution")
-	}
 	s.resolution = resolution
 	return s
 }
@@ -82,17 +66,28 @@ func (s *GetTradingViewHistoryTx) Do() (*types.TradingViewHistoryResponse, error
 }
 
 func (s *GetTradingViewHistoryTx) validate() error {
-	if s.from <= 0 {
-		s.from = utils.RawCurrentTimestamp() - 86400
-	}
-	if s.to <= 0 {
-		s.to = utils.RawCurrentTimestamp()
-	}
-	if s.resolution == "" {
-		s.resolution = types.Time1h
-	}
 	if s.symbol == "" {
 		return types.ErrSymbolMandatory
 	}
+	if s.from <= 0 {
+		// s.from = utils.RawCurrentTimestamp() - 86400
+		return types.ErrInvalidTimeStamp
+	}
+	if s.to <= 0 {
+		// s.to = utils.RawCurrentTimestamp()
+		return types.ErrInvalidTimeStamp
+	}
+	if err := s.validateResolution(); err != nil {
+		return err
+	}
 	return nil
+}
+
+func (s *GetTradingViewHistoryTx) validateResolution() error {
+	for _, v := range types.TimeResolutions {
+		if s.resolution == v {
+			return nil
+		}
+	}
+	return types.ErrInvalidTimeResolution
 }

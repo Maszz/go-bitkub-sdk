@@ -22,10 +22,7 @@ func (s *GetTickerTx) Do() (*types.TickerResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchAPIError(data)
-	if respErr != nil {
-		return nil, respErr
-	}
+
 	res := new(types.TickerResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {
@@ -45,16 +42,12 @@ func (s *GetTickerTx) DoAny() (*types.TickerResponseAny, error) {
 	if err != nil {
 		return nil, err
 	}
-	respErr := s.c.catchAPIError(data)
-	if respErr != nil {
-		return nil, respErr
-	}
 
-	res := new(types.TickerResponseAny)
-	err = sonic.Unmarshal(data, res)
+	res := make(types.TickerResponseAny, 0)
+	err = sonic.Unmarshal(data, &res)
 	if err != nil {
 		return nil, err
 	}
 
-	return res, nil
+	return &res, nil
 }

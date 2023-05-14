@@ -22,11 +22,11 @@ func (s *GetStatusTx) Do() (*types.ServerStatusArray, error) {
 	if err != nil {
 		return nil, err
 	}
-	res := new(types.ServerStatusArray)
-	err = sonic.Unmarshal(data, res)
+	res := make(types.ServerStatusArray, 0)
+	err = sonic.Unmarshal(data, &res)
 	if err != nil {
 		return nil, err
 	}
 
-	return res, nil
+	return &res, nil
 }

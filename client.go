@@ -19,6 +19,8 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+type doFunc func(url, method string, body []byte, header *fasthttp.RequestHeader) ([]byte, error)
+
 type Client struct {
 	APIKey     string
 	SecretKey  string
@@ -28,6 +30,7 @@ type Client struct {
 	Debug      bool
 	Logger     *log.Logger
 	TimeOffset int64
+	do         doFunc
 }
 
 /*
@@ -92,7 +95,11 @@ func (c *Client) callAPI(r *request) ([]byte, error) {
 
 	// transform request object to fasthttp request object
 	// fmt.Println("calling api", r.query.String())
-	req, err := c.HTTPClient.DoRequest(r.fullURL, r.method, r.body, r.headers)
+	f := c.do
+	if f == nil {
+		f = c.HTTPClient.DoRequest
+	}
+	req, err := f(r.fullURL, r.method, r.body, r.headers)
 	// parse only error response
 	if err != nil {
 		return nil, err
@@ -279,6 +286,9 @@ func (c *Client) NewGetMarketDepthTx() *GetMarketDepthTx {
 	return &GetMarketDepthTx{c: c}
 }
 
+/*
+If Use Invalid Resolution
+*/
 func (c *Client) NewGetTradingviewHistoryTx() *GetTradingViewHistoryTx {
 	return &GetTradingViewHistoryTx{c: c}
 }

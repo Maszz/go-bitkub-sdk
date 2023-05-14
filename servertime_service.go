@@ -1,7 +1,7 @@
 package bitkub
 
 import (
-	"encoding/binary"
+	"strconv"
 
 	"github.com/Maszz/go-bitkub-sdk/types"
 
@@ -12,7 +12,7 @@ type GetServerTimeTx struct {
 	c *Client
 }
 
-func (s *GetServerTimeTx) Do() (*uint64, error) {
+func (s *GetServerTimeTx) Do() (*int, error) {
 	r := &request{
 		method:   fasthttp.MethodGet,
 		endpoint: types.ServertimeEndpoint,
@@ -22,7 +22,8 @@ func (s *GetServerTimeTx) Do() (*uint64, error) {
 	if err != nil {
 		return nil, err
 	}
-	resp := binary.BigEndian.Uint64(data)
+	resp, _ := strconv.Atoi(string(data))
+
 	res := &resp
 
 	return res, nil
