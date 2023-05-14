@@ -16,7 +16,6 @@ type baseTestSuite struct {
 	apiKey    string
 	secretKey string
 }
-type assertReqFunc func(r *request)
 
 func (s *baseTestSuite) r() *require.Assertions {
 	return s.Require()
@@ -31,7 +30,6 @@ func (s *baseTestSuite) SetupTest() {
 type mockedClient struct {
 	mock.Mock
 	*Client
-	assertReq assertReqFunc
 }
 
 func newMockedClient(apiKey, secretKey string) *mockedClient {
@@ -69,7 +67,5 @@ func (s *clientTestSuite) TestDoError() {
 	s.mockDo(nil, fmt.Errorf("dummy error"))
 	defer s.assertDo()
 	_, err := s.client.callAPI(&request{})
-
-	// s.r().Error(err)
 	s.r().Contains(err.Error(), "dummy error")
 }
