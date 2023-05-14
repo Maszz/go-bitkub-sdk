@@ -69,3 +69,8 @@ func (s *clientTestSuite) TestDoError() {
 	_, err := s.client.callAPI(&request{})
 	s.r().Contains(err.Error(), "dummy error")
 }
+
+func (s *clientTestSuite) TestSignPayload() {
+	sigedVal := s.client.signPayload(`{"a":1,"b":2}`)
+	s.r().Equal("59e82ee261201e059c88cbedd22edc7d5a2fc86069a5e638b19886413a5544e5", sigedVal)
+}

@@ -86,7 +86,7 @@ func (c *Client) parseRequest(r *request) {
 
 	headers.Set("User-Agent", c.UserAgent)
 	r.fullURL = urlWithBase
-	fmt.Println("full url", r.fullURL)
+	// fmt.Println("full url", r.fullURL)
 	r.headers = headers
 }
 
