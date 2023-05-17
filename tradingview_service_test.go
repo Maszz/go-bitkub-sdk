@@ -147,14 +147,10 @@ func (s *tradingViewServiceTestSuite) TestGetTradingViewHistoryHTTPError() {
 
 func (s *tradingViewServiceTestSuite) TestGetTradingViewUnmarshalError() {
 	s.mockDo(s.unmarshalMockData, nil)
-	mockDataStuct := new(types.TradingViewHistoryResponse)
-	err := sonic.Unmarshal(s.unmarshalMockData, mockDataStuct)
-	s.r().Error(err)
-	s.r().EqualError(err, "json: cannot unmarshal number into Go struct field TradingViewHistoryResponse.s of type string")
-
-	_, err = s.client.NewGetTradingviewHistoryTx().FromTimestamp(1633424400).ToTimestamp(1633428000).Resolution(types.Time1m).Symbol("THB_BTC").Do()
+	data, err := s.client.NewGetTradingviewHistoryTx().FromTimestamp(1633424400).ToTimestamp(1633428000).Resolution(types.Time1m).Symbol("THB_BTC").Do()
 	defer s.assertDo()
 
+	s.r().Nil(data)
 	s.r().Error(err)
 	s.r().EqualError(err, "json: cannot unmarshal number into Go struct field TradingViewHistoryResponse.s of type string")
 }

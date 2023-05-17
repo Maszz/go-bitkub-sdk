@@ -2,7 +2,10 @@ package types
 
 import "github.com/bytedance/sonic"
 
-type WalletResponseAny map[string]float64
+type WalletResponseAny struct {
+	Error  int                `json:"error"`
+	Result map[string]float64 `json:"result"`
+}
 
 func (w *WalletResponseAny) Compile() *WalletResponse {
 	resultByte, err := sonic.Marshal(w)
@@ -70,6 +73,6 @@ type WalletResult struct {
 }
 
 type WalletResponse struct {
-	Error  float64      `json:"error"`
+	Error  int          `json:"error"`
 	Result WalletResult `json:"result"`
 }

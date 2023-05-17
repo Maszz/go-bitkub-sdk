@@ -45,8 +45,8 @@ func (s *tradesServiceTestSuite) BeforeTest(suiteName, testName string) {
 	  `)
 	s.apiErrorMockData = []byte(`{
 		"error": 3,
-		"result": []
-	} `)
+		"result": {}
+	  }`)
 }
 
 func (s *tradesServiceTestSuite) TestSetSymbol() {
@@ -78,17 +78,24 @@ func (s *tradesServiceTestSuite) TestGetTrades() {
 
 func (s *tradesServiceTestSuite) TestGetTradesValidateSymbol() {
 	tx := s.client.NewGetTradesTx()
+	tx.Limit(5)
 	s.r().ErrorIs(tx.validate(), types.ErrSymbolMandatory)
 	tx.Symbol("")
 	s.r().ErrorIs(tx.validate(), types.ErrSymbolMandatory)
+	tx.Symbol("THB_BTC")
+	s.r().NoError(tx.validate())
+
 }
 
 func (s *tradesServiceTestSuite) TestGetTradesValidateLimit() {
 	tx := s.client.NewGetTradesTx()
 	tx.Symbol(types.Symbol("THB_BTC"))
+	s.r().Error(tx.validate(), types.ErrLimitMandatory)
 	limit := -2
 	tx.Limit(limit)
 	s.r().ErrorIs(tx.validate(), types.ErrLimitMustBePositive)
+	tx.Limit(5)
+	s.r().NoError(tx.validate())
 
 }
 
@@ -101,11 +108,8 @@ func (s *tradesServiceTestSuite) TestGetTradesDoValidate() {
 
 func (s *tradesServiceTestSuite) TestGetTradesAPIError() {
 	s.mockDo(s.apiErrorMockData, nil)
-	mockDataStuct := new(types.TradesResponse)
-	err := sonic.Unmarshal(s.apiErrorMockData, mockDataStuct)
-	s.r().NoError(err)
 
-	_, err = s.client.NewGetTradesTx().Symbol("THB_BTC").Limit(10).Do()
+	_, err := s.client.NewGetTradesTx().Symbol("THB_BTC").Limit(10).Do()
 	defer s.assertDo()
 
 	s.r().Error(err)
@@ -123,14 +127,10 @@ func (s *tradesServiceTestSuite) TestGetTradesHTTPError() {
 
 func (s *tradesServiceTestSuite) TestGetTradesUnmarshalError() {
 	s.mockDo(s.unmarshalMockData, nil)
-	mockDataStuct := new(types.TradesResponse)
-	err := sonic.Unmarshal(s.unmarshalMockData, mockDataStuct)
-	s.r().Error(err)
-	s.r().EqualError(err, "json: cannot unmarshal object into Go struct field TradesResponse.result of type [][]interface {}")
-
-	_, err = s.client.NewGetTradesTx().Symbol("THB_BTC").Limit(10).Do()
+	data, err := s.client.NewGetTradesTx().Symbol("THB_BTC").Limit(10).Do()
 	defer s.assertDo()
 
+	s.r().Nil(data)
 	s.r().Error(err)
 	s.r().EqualError(err, "json: cannot unmarshal object into Go struct field TradesResponse.result of type [][]interface {}")
 

@@ -39,6 +39,10 @@ func (s *GetWalletsTx) Do() (*types.WalletResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+	respErr := s.c.catchAPIError(data)
+	if respErr != nil {
+		return nil, respErr
+	}
 	res := new(types.WalletResponse)
 	err = sonic.Unmarshal(data, res)
 	if err != nil {

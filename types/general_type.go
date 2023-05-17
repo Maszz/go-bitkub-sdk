@@ -122,6 +122,7 @@ var (
 	ErrOrderTypeMandatory    = errors.New("order type is mandatory")
 	ErrPageMustBePositive    = errors.New("page must be positive")
 	ErrLimitMustBePositive   = errors.New("limit must be positive")
+	ErrLimitMandatory        = errors.New("limit is mandatory") //
 	ErrCurrencyMandatory     = errors.New("currency is mandatory")
 	ErrAddressMandatory      = errors.New("address is mandatory")
 	ErrNetworkMandatory      = errors.New("network is mandatory")

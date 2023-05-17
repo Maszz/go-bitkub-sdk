@@ -135,33 +135,21 @@ func (s *tickerServiceTestSuite) TestGetTickerAnyHTTPError() {
 }
 
 func (s *tickerServiceTestSuite) TestGetTickerUnmarshalError() {
-
 	s.mockDo(s.unmarshalMockData, nil)
-
-	mockDataStuct := new(types.TickerResponse)
-	err := sonic.Unmarshal(s.unmarshalMockData, &mockDataStuct)
-	s.r().Error(err)
-	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field TickerProperty.THB_1INCH.id of type int")
-
-	_, err2 := s.client.NewGetTickerTx().Do()
+	_, err := s.client.NewGetTickerTx().Do()
 	defer s.assertDo()
 
-	s.r().Error(err2)
-	s.r().EqualError(err2, "json: cannot unmarshal string into Go struct field TickerProperty.THB_1INCH.id of type int")
+	s.r().Error(err)
+	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field TickerProperty.THB_1INCH.id of type int")
 }
 
 func (s *tickerServiceTestSuite) TestGetTickerAnyUnmarshalError() {
-
 	s.mockDo(s.unmarshalMockData, nil)
 
-	mockDataStuct := make(types.TickerResponseAny, 0)
-	err := sonic.Unmarshal(s.unmarshalMockData, &mockDataStuct)
-	s.r().Error(err)
-	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field TickerProperty.id of type int")
-
-	_, err2 := s.client.NewGetTickerTx().DoAny()
+	data, err := s.client.NewGetTickerTx().DoAny()
 	defer s.assertDo()
 
-	s.r().Error(err2)
-	s.r().EqualError(err2, "json: cannot unmarshal string into Go struct field TickerProperty.id of type int")
+	s.r().Nil(data)
+	s.r().Error(err)
+	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field TickerProperty.id of type int")
 }

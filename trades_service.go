@@ -57,7 +57,10 @@ func (s *GetTradesTx) validate() error {
 	if s.symbol == "" {
 		return types.ErrSymbolMandatory
 	}
-	if s.limit <= 0 {
+	if s.limit == 0 {
+		return types.ErrLimitMandatory
+	}
+	if s.limit < 0 {
 		return types.ErrLimitMustBePositive
 	}
 

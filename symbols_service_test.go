@@ -32,11 +32,7 @@ func (s *symbolsServiceTestSuite) BeforeTest(suiteName, testName string) {
 
 	s.apiErrorMockData = []byte(`{
 		"error": 3,
-		"result": [
-		  { "id": 1, "info": "Thai Baht to Bitcoin", "symbol": "THB_BTC" },
-		  { "id": 2, "info": "Thai Baht to Ethereum", "symbol": "THB_ETH" },
-		  { "id": 3, "info": "Thai Baht to Wancoin", "symbol": "THB_WAN" }
-		]
+		"result": {}
 	  }`)
 
 	s.unmarshalMockData = []byte(`{
@@ -69,10 +65,6 @@ func (s *symbolsServiceTestSuite) TestGetSymbols() {
 func (s *symbolsServiceTestSuite) TestGetSymbolsAPIError() {
 	s.mockDo(s.apiErrorMockData, nil)
 
-	mockDataStuct := new(types.SymbolsResponse)
-	err := sonic.Unmarshal(s.apiErrorMockData, mockDataStuct)
-	s.r().NoError(err)
-
 	_, err2 := s.client.NewGetSymbolsTx().Do()
 	defer s.assertDo()
 
@@ -83,15 +75,10 @@ func (s *symbolsServiceTestSuite) TestGetSymbolsAPIError() {
 func (s *symbolsServiceTestSuite) TestGetSymbolsUnmarshalError() {
 
 	s.mockDo(s.unmarshalMockData, nil)
-
-	mockDataStuct := new(types.SymbolsResponse)
-	err := sonic.Unmarshal(s.unmarshalMockData, &mockDataStuct)
-	s.r().Error(err)
-	s.r().EqualError(err, `json: cannot unmarshal string into Go struct field .result.id of type int`)
-
-	_, err2 := s.client.NewGetSymbolsTx().Do()
+	data, err2 := s.client.NewGetSymbolsTx().Do()
 	defer s.assertDo()
 
+	s.r().Nil(data)
 	s.r().Error(err2)
 	s.r().EqualError(err2, `json: cannot unmarshal string into Go struct field .result.id of type int`)
 }

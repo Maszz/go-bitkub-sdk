@@ -55,11 +55,14 @@ func (s *GetOpenBooksTx) Do() (*types.OpenBooksResponse, error) {
 }
 
 func (s *GetOpenBooksTx) validate() error {
-	if s.limit <= 0 {
-		s.limit = 10
-	}
 	if s.symbol == "" {
 		return types.ErrSymbolMandatory
+	}
+	if s.limit == 0 {
+		return types.ErrLimitMandatory
+	}
+	if s.limit < 0 {
+		return types.ErrLimitMustBePositive
 	}
 
 	return nil

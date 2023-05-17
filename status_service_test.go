@@ -63,15 +63,10 @@ func (s *statusServiceTestSuite) TestGetStatusHttpError() {
 func (s *statusServiceTestSuite) TestGetStatusUnmarshalError() {
 
 	s.mockDo(s.unmarshalMockData, nil)
-
-	mockDataStuct := make(types.ServerStatusArray, 0)
-	err := sonic.Unmarshal(s.unmarshalMockData, &mockDataStuct)
-	s.r().Error(err)
-	s.r().EqualError(err, "json: cannot unmarshal number into Go struct field ServerStatus.status of type string")
-
-	_, err2 := s.client.NewGetStatusTx().Do()
+	data, err := s.client.NewGetStatusTx().Do()
 	defer s.assertDo()
 
-	s.r().Error(err2)
-	s.r().EqualError(err2, "json: cannot unmarshal number into Go struct field ServerStatus.status of type string")
+	s.r().Nil(data)
+	s.r().Error(err)
+	s.r().EqualError(err, "json: cannot unmarshal number into Go struct field ServerStatus.status of type string")
 }
