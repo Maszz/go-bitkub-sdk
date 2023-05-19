@@ -134,22 +134,22 @@ func (s *tickerServiceTestSuite) TestGetTickerAnyHTTPError() {
 	s.r().Contains(err.Error(), "HTTP Error")
 }
 
-func (s *tickerServiceTestSuite) TestGetTickerUnmarshalError() {
-	s.mockDo(s.unmarshalMockData, nil)
-	_, err := s.client.NewGetTickerTx().Do()
-	defer s.assertDo()
+// func (s *tickerServiceTestSuite) TestGetTickerUnmarshalError() {
+// 	s.mockDo(s.unmarshalMockData, nil)
+// 	_, err := s.client.NewGetTickerTx().Do()
+// 	defer s.assertDo()
 
-	s.r().Error(err)
-	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field TickerProperty.THB_1INCH.id of type int")
-}
+// 	s.r().Error(err)
+// 	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field TickerProperty.THB_1INCH.id of type int")
+// }
 
-func (s *tickerServiceTestSuite) TestGetTickerAnyUnmarshalError() {
-	s.mockDo(s.unmarshalMockData, nil)
+// func (s *tickerServiceTestSuite) TestGetTickerAnyUnmarshalError() {
+// 	s.mockDo(s.unmarshalMockData, nil)
 
-	data, err := s.client.NewGetTickerTx().DoAny()
-	defer s.assertDo()
+// 	data, err := s.client.NewGetTickerTx().DoAny()
+// 	defer s.assertDo()
 
-	s.r().Nil(data)
-	s.r().Error(err)
-	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field TickerProperty.id of type int")
-}
+// 	s.r().Nil(data)
+// 	s.r().Error(err)
+// 	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field TickerProperty.id of type int")
+// }

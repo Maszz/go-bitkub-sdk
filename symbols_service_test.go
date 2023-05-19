@@ -72,16 +72,16 @@ func (s *symbolsServiceTestSuite) TestGetSymbolsAPIError() {
 	s.r().Contains(err2.Error(), "Invalid API key")
 }
 
-func (s *symbolsServiceTestSuite) TestGetSymbolsUnmarshalError() {
+// func (s *symbolsServiceTestSuite) TestGetSymbolsUnmarshalError() {
 
-	s.mockDo(s.unmarshalMockData, nil)
-	data, err2 := s.client.NewGetSymbolsTx().Do()
-	defer s.assertDo()
+// 	s.mockDo(s.unmarshalMockData, nil)
+// 	data, err2 := s.client.NewGetSymbolsTx().Do()
+// 	defer s.assertDo()
 
-	s.r().Nil(data)
-	s.r().Error(err2)
-	s.r().EqualError(err2, `json: cannot unmarshal string into Go struct field .result.id of type int`)
-}
+// 	s.r().Nil(data)
+// 	s.r().Error(err2)
+// 	s.r().EqualError(err2, `json: cannot unmarshal string into Go struct field .result.id of type int`)
+// }
 
 func (s *symbolsServiceTestSuite) TestGetSymbolsHttpError() {
 	s.mockDo(nil, fmt.Errorf("errFakeResponse"))

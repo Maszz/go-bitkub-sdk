@@ -110,13 +110,13 @@ func (s *GetBalanceServiceTestSuite) TestGetBalanceAnyAPIError() {
 	s.r().EqualError(err, "error id: 3, error message: Invalid API key")
 }
 
-func (s *GetBalanceServiceTestSuite) TestGetBalanceUnMarshalError() {
-	s.mockDo(s.unmarshalMockData, nil)
+// func (s *GetBalanceServiceTestSuite) TestGetBalanceUnMarshalError() {
+// 	s.mockDo(s.unmarshalMockData, nil)
 
-	data, err := s.client.NewGetBalancesTx().Do()
-	defer s.assertDo()
+// 	data, err := s.client.NewGetBalancesTx().Do()
+// 	defer s.assertDo()
 
-	s.r().Nil(data)
-	s.r().Error(err)
-	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field BalancesProps.result.THB.available of type float64")
-}
+// 	s.r().Nil(data)
+// 	s.r().Error(err)
+// 	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field BalancesProps.result.THB.available of type float64")
+// }

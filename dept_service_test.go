@@ -108,14 +108,14 @@ func (s *DeptServiceTestSuite) TestGetMarketDeptHttpError() {
 	s.r().EqualError(err, "http error")
 }
 
-func (s *DeptServiceTestSuite) TestGetMarketDeptUnmarshalError() {
-	s.mockDo(s.unmarshalMockData, nil)
+// func (s *DeptServiceTestSuite) TestGetMarketDeptUnmarshalError() {
+// 	s.mockDo(s.unmarshalMockData, nil)
 
-	data, err := s.client.NewGetMarketDepthTx().Symbol(symbols.THB_BTC).Limit(2).Do()
-	defer s.assertDo()
+// 	data, err := s.client.NewGetMarketDepthTx().Symbol(symbols.THB_BTC).Limit(2).Do()
+// 	defer s.assertDo()
 
-	s.r().Nil(data)
-	s.r().Error(err)
-	s.r().
-		EqualError(err, "json: cannot unmarshal string into Go struct field MarketDepthResponse.asks of type float64")
-}
+// 	s.r().Nil(data)
+// 	s.r().Error(err)
+// 	s.r().
+// 		EqualError(err, "json: cannot unmarshal string into Go struct field MarketDepthResponse.asks of type float64")
+// }

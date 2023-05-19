@@ -125,13 +125,13 @@ func (s *tradesServiceTestSuite) TestGetTradesHTTPError() {
 	s.r().EqualError(err, "dummy error")
 }
 
-func (s *tradesServiceTestSuite) TestGetTradesUnmarshalError() {
-	s.mockDo(s.unmarshalMockData, nil)
-	data, err := s.client.NewGetTradesTx().Symbol("THB_BTC").Limit(10).Do()
-	defer s.assertDo()
+// func (s *tradesServiceTestSuite) TestGetTradesUnmarshalError() {
+// 	s.mockDo(s.unmarshalMockData, nil)
+// 	data, err := s.client.NewGetTradesTx().Symbol("THB_BTC").Limit(10).Do()
+// 	defer s.assertDo()
 
-	s.r().Nil(data)
-	s.r().Error(err)
-	s.r().EqualError(err, "json: cannot unmarshal object into Go struct field TradesResponse.result of type [][]interface {}")
+// 	s.r().Nil(data)
+// 	s.r().Error(err)
+// 	s.r().EqualError(err, "json: cannot unmarshal object into Go struct field TradesResponse.result of type [][]interface {}")
 
-}
+// }

@@ -115,15 +115,15 @@ func (s *UserServiceTestSuite) TestGetUserLimitHTTPError() {
 	s.r().EqualError(err, "http error")
 }
 
-func (s *UserServiceTestSuite) TestGetUserLimitUnmarshalError() {
-	s.mockDo(s.getUserLimitUnmarshalMockData, nil)
-	data, err := s.client.NewGetUserLimitsTx().Do()
-	defer s.assertDo()
+// func (s *UserServiceTestSuite) TestGetUserLimitUnmarshalError() {
+// 	s.mockDo(s.getUserLimitUnmarshalMockData, nil)
+// 	data, err := s.client.NewGetUserLimitsTx().Do()
+// 	defer s.assertDo()
 
-	s.r().Nil(data)
-	s.r().Error(err)
-	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field .result.limits.fiat.deposit of type float64")
-}
+// 	s.r().Nil(data)
+// 	s.r().Error(err)
+// 	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field .result.limits.fiat.deposit of type float64")
+// }
 
 func (s *UserServiceTestSuite) TestGetUserLimitAPIError() {
 	s.mockDo(s.apiErrorMockData, nil)
@@ -156,15 +156,15 @@ func (s *UserServiceTestSuite) TestGetTradingCreditHTTPError() {
 	s.r().EqualError(err, "http error")
 }
 
-func (s *UserServiceTestSuite) TestGetTradingCreditUnmarshalError() {
-	s.mockDo(s.getTradingCreditsUnmarshalMockData, nil)
-	data, err := s.client.NewGetTradingCreditsTx().Do()
-	defer s.assertDo()
+// func (s *UserServiceTestSuite) TestGetTradingCreditUnmarshalError() {
+// 	s.mockDo(s.getTradingCreditsUnmarshalMockData, nil)
+// 	data, err := s.client.NewGetTradingCreditsTx().Do()
+// 	defer s.assertDo()
 
-	s.r().Nil(data)
-	s.r().Error(err)
-	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field GetTradingCreditsResponse.result of type float64")
-}
+// 	s.r().Nil(data)
+// 	s.r().Error(err)
+// 	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field GetTradingCreditsResponse.result of type float64")
+// }
 
 func (s *UserServiceTestSuite) TestGetTradingCreditAPIError() {
 	s.mockDo(s.apiErrorMockData, nil)

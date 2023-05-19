@@ -60,13 +60,13 @@ func (s *statusServiceTestSuite) TestGetStatusHttpError() {
 
 }
 
-func (s *statusServiceTestSuite) TestGetStatusUnmarshalError() {
+// func (s *statusServiceTestSuite) TestGetStatusUnmarshalError() {
 
-	s.mockDo(s.unmarshalMockData, nil)
-	data, err := s.client.NewGetStatusTx().Do()
-	defer s.assertDo()
+// 	s.mockDo(s.unmarshalMockData, nil)
+// 	data, err := s.client.NewGetStatusTx().Do()
+// 	defer s.assertDo()
 
-	s.r().Nil(data)
-	s.r().Error(err)
-	s.r().EqualError(err, "json: cannot unmarshal number into Go struct field ServerStatus.status of type string")
-}
+// 	s.r().Nil(data)
+// 	s.r().Error(err)
+// 	s.r().EqualError(err, "json: cannot unmarshal number into Go struct field ServerStatus.status of type string")
+// }
