@@ -16,6 +16,8 @@ type BidAskServiceTestSuite struct {
 	apiErrorMockData          []byte
 	placeBidMockData          []byte
 	placeBidUnmarshalMockData []byte
+	placeAskMockData          []byte
+	placeAskUnmarshalMockData []byte
 }
 
 func TestBidAskTestSuite(t *testing.T) {
@@ -48,6 +50,20 @@ func (s *BidAskServiceTestSuite) BeforeTest(suiteName, testName string) {
 	"error": 3,
 	"result": []
   }`)
+	s.placeBidMockData = []byte(`{
+		"error": 0,
+		"result": {
+		  "id": 1,
+		  "hash": "fwQ6dnQWQPs4cbatF5Am2xCDP1J",
+		  "amt": 1000,
+		  "rat": 15000,
+		  "fee": 2.5,
+		  "cre": 2.5,
+		  "rec": 0.06666666,
+		  "ts": 1533834547,
+		  "ci": "input_client_id"
+		}
+	  }`)
 	s.placeBidUnmarshalMockData = []byte(`{
 	"error": 0,
 	"result": {
@@ -63,6 +79,38 @@ func (s *BidAskServiceTestSuite) BeforeTest(suiteName, testName string) {
 	}
   }
   `)
+
+	s.placeAskMockData = []byte(`{
+		"error": 0,
+		"result": {
+		  "id": 1,
+		  "hash": "fwQ6dnQWQPs4cbatFGc9LPnpqyu",
+		  "typ": "limit",
+		  "amt":  1.00000000,
+		  "rat": 15000,
+		  "fee": 37.5,
+		  "cre": 37.5,
+		  "rec": 15000,
+		  "ts": 1533834844,
+		  "ci": "input_client_id"
+		}
+	  }`)
+
+	s.placeAskUnmarshalMockData = []byte(`{
+		"error": 0,
+		"result": {
+		  "id": 1,
+		  "hash": "fwQ6dnQWQPs4cbatFGc9LPnpqyu",
+		  "typ": "limit",
+		  "amt":  "1.00000000",
+		  "rat": 15000,
+		  "fee": 37.5,
+		  "cre": 37.5,
+		  "rec": 15000,
+		  "ts": 1533834844,
+		  "ci": "input_client_id"
+		}
+	}`)
 }
 
 func (s *BidAskServiceTestSuite) TestGetBids() {
@@ -266,4 +314,211 @@ func (s *BidAskServiceTestSuite) TestPlaceBidUnmarshalError() {
 	s.r().Nil(bids)
 	s.r().Error(err)
 	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field .result.amt of type float64")
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceBidAPIError() {
+	s.mockDo(s.apiErrorMockData, nil)
+
+	bids, err := s.client.NewPlaceBidTx().Symbol("THB_BTC").Amount(100).OrderType(types.OrderTypeMarket).Do()
+	defer s.assertDo()
+
+	s.r().Nil(bids)
+	s.r().Error(err)
+	s.r().EqualError(err, "error id: 3, error message: Invalid API key")
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceBidSetSymbol() {
+	tx := s.client.NewPlaceBidTx()
+	symbol := types.Symbol("THB_BTC")
+	tx.Symbol(symbol)
+	s.r().Equal(symbol, tx.symbol)
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceBidSetAmount() {
+	tx := s.client.NewPlaceBidTx()
+	amount := 10.0
+	tx.Amount(amount)
+	s.r().Equal(amount, tx.amount)
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceBidSetOrderType() {
+	tx := s.client.NewPlaceBidTx()
+	orderType := types.OrderTypeMarket
+	tx.OrderType(orderType)
+	s.r().Equal(orderType, tx.orderType)
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceBidSetRate() {
+	tx := s.client.NewPlaceBidTx()
+	rate := 10.0
+	tx.Rate(rate)
+	s.r().Equal(rate, tx.rate)
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceBidSetClientID() {
+	tx := s.client.NewPlaceBidTx()
+	clientID := "clientID"
+	tx.ClientID(clientID)
+	s.r().Equal(clientID, tx.clientID)
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceBidValidateSymbol() {
+	tx := s.client.NewPlaceBidTx()
+	tx.Amount(10)
+	tx.OrderType(types.OrderTypeMarket)
+	s.r().ErrorIs(tx.validate(), types.ErrSymbolMandatory)
+	tx.Symbol("")
+	s.r().ErrorIs(tx.validate(), types.ErrSymbolMandatory)
+	tx.Symbol("THB_BTC")
+	s.r().NoError(tx.validate())
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceBidValidateAmount() {
+	tx := s.client.NewPlaceBidTx()
+	tx.Symbol(types.Symbol("THB_BTC"))
+	tx.OrderType(types.OrderTypeMarket)
+	s.r().ErrorIs(tx.validate(), types.ErrAmountMandatory)
+	tx.Amount(-2)
+	s.r().ErrorIs(tx.validate(), types.ErrAmountMustBePositive)
+	tx.Amount(5)
+	s.r().NoError(tx.validate())
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceBidValidateOrderTypeAndRate() {
+	tx := s.client.NewPlaceBidTx()
+	tx.Symbol(types.Symbol("THB_BTC"))
+	tx.Amount(10)
+	s.r().ErrorIs(tx.validate(), types.ErrOrderTypeMandatory)
+	tx.OrderType(types.OrderTypeMarket)
+	s.r().NoError(tx.validate())
+	tx.OrderType(types.OrderTypeLimit)
+	s.r().ErrorIs(tx.validate(), types.ErrRateMandatory)
+	tx.Rate(10)
+	s.r().NoError(tx.validate())
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceBidDoValidate() {
+	_, err := s.client.NewPlaceBidTx().Do()
+	s.r().Error(err)
+	s.r().ErrorIs(err, types.ErrSymbolMandatory)
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceAsk() {
+	s.mockDo(s.placeAskMockData, nil)
+	mockDataStuct := new(types.PlaceBidAskResponse)
+	err := sonic.Unmarshal(s.placeAskMockData, mockDataStuct)
+	s.r().NoError(err)
+
+	asks, err := s.client.NewPlaceAskTx().Symbol("THB_BTC").Amount(100).OrderType(types.OrderTypeMarket).Do()
+	defer s.assertDo()
+
+	s.r().NoError(err)
+	s.r().Equal(mockDataStuct, asks)
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceAskHTTPError() {
+	s.mockDo(nil, fmt.Errorf("http error"))
+	asks, err := s.client.NewPlaceAskTx().Symbol("THB_BTC").Amount(100).OrderType(types.OrderTypeMarket).Do()
+	defer s.assertDo()
+
+	s.r().Nil(asks)
+	s.r().Error(err)
+	s.r().EqualError(err, "http error")
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceAskUnmarshalError() {
+	s.mockDo(s.placeAskUnmarshalMockData, nil)
+	asks, err := s.client.NewPlaceAskTx().Symbol("THB_BTC").Amount(100).OrderType(types.OrderTypeMarket).Do()
+	defer s.assertDo()
+
+	s.r().Nil(asks)
+	s.r().Error(err)
+	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field .result.amt of type float64")
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceAskAPIError() {
+	s.mockDo(s.apiErrorMockData, nil)
+
+	asks, err := s.client.NewPlaceAskTx().Symbol("THB_BTC").Amount(100).OrderType(types.OrderTypeMarket).Do()
+	defer s.assertDo()
+
+	s.r().Nil(asks)
+	s.r().Error(err)
+	s.r().EqualError(err, "error id: 3, error message: Invalid API key")
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceAskSetSymbol() {
+	tx := s.client.NewPlaceAskTx()
+	symbol := types.Symbol("THB_BTC")
+	tx.Symbol(symbol)
+	s.r().Equal(symbol, tx.symbol)
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceAskSetAmount() {
+	tx := s.client.NewPlaceAskTx()
+	amount := 10.0
+	tx.Amount(amount)
+	s.r().Equal(amount, tx.amount)
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceAskSetOrderType() {
+	tx := s.client.NewPlaceAskTx()
+	orderType := types.OrderTypeMarket
+	tx.OrderType(orderType)
+	s.r().Equal(orderType, tx.orderType)
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceAskSetRate() {
+	tx := s.client.NewPlaceAskTx()
+	rate := 10.0
+	tx.Rate(rate)
+	s.r().Equal(rate, tx.rate)
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceAskSetClientID() {
+	tx := s.client.NewPlaceAskTx()
+	clientID := "clientID"
+	tx.ClientID(clientID)
+	s.r().Equal(clientID, tx.clientID)
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceAskValidateSymbol() {
+	tx := s.client.NewPlaceAskTx()
+	tx.Amount(10)
+	tx.OrderType(types.OrderTypeMarket)
+	s.r().ErrorIs(tx.validate(), types.ErrSymbolMandatory)
+	tx.Symbol("")
+	s.r().ErrorIs(tx.validate(), types.ErrSymbolMandatory)
+	tx.Symbol("THB_BTC")
+	s.r().NoError(tx.validate())
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceAskValidateAmount() {
+	tx := s.client.NewPlaceAskTx()
+	tx.Symbol(types.Symbol("THB_BTC"))
+	tx.OrderType(types.OrderTypeMarket)
+	s.r().ErrorIs(tx.validate(), types.ErrAmountMandatory)
+	tx.Amount(-2)
+	s.r().ErrorIs(tx.validate(), types.ErrAmountMustBePositive)
+	tx.Amount(5)
+	s.r().NoError(tx.validate())
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceAskValidateOrderTypeAndRate() {
+	tx := s.client.NewPlaceAskTx()
+	tx.Symbol(types.Symbol("THB_BTC"))
+	tx.Amount(10)
+	s.r().ErrorIs(tx.validate(), types.ErrOrderTypeMandatory)
+	tx.OrderType(types.OrderTypeMarket)
+	s.r().NoError(tx.validate())
+	tx.OrderType(types.OrderTypeLimit)
+	s.r().ErrorIs(tx.validate(), types.ErrRateMandatory)
+	tx.Rate(10)
+	s.r().NoError(tx.validate())
+}
+
+func (s *BidAskServiceTestSuite) TestPlaceAskDoValidate() {
+	_, err := s.client.NewPlaceAskTx().Do()
+	s.r().Error(err)
+	s.r().ErrorIs(err, types.ErrSymbolMandatory)
 }

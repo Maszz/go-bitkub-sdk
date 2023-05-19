@@ -216,12 +216,16 @@ func (s *PlaceBidTx) validate() error {
 	if s.amount == 0 {
 		return types.ErrAmountMandatory
 	}
-	if s.rate == 0 && s.orderType != types.OrderTypeMarket {
-		return types.ErrRateMandatory
+	if s.amount < 0 {
+		return types.ErrAmountMustBePositive
 	}
 	if s.orderType == "" {
 		return types.ErrOrderTypeMandatory
 	}
+	if s.rate == 0 && s.orderType == types.OrderTypeLimit {
+		return types.ErrRateMandatory
+	}
+
 	return nil
 }
 
@@ -307,10 +311,13 @@ func (s *PlaceAskTx) validate() error {
 	if s.symbol == "" {
 		return types.ErrSymbolMandatory
 	}
-	if s.amount <= 0 {
+	if s.amount == 0 {
 		return types.ErrAmountMandatory
 	}
-	if s.rate == 0 && s.orderType != types.OrderTypeMarket {
+	if s.amount < 0 {
+		return types.ErrAmountMustBePositive
+	}
+	if s.rate == 0 && s.orderType == types.OrderTypeLimit {
 		return types.ErrRateMandatory
 	}
 	if s.orderType == "" {
