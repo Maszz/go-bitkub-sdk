@@ -16,7 +16,7 @@ type PlaceBidAskResponse struct {
 		ID   int     `json:"id"`
 		Hash string  `json:"hash"`
 		Typ  string  `json:"typ"`
-		Amt  int     `json:"amt"`
+		Amt  float64 `json:"amt"`
 		Rat  int     `json:"rat"`
 		Fee  float64 `json:"fee"`
 		Cre  float64 `json:"cre"`
