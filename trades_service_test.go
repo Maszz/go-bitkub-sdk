@@ -11,9 +11,8 @@ import (
 
 type tradesServiceTestSuite struct {
 	baseTestSuite
-	mockData          []byte
-	unmarshalMockData []byte
-	apiErrorMockData  []byte
+	mockData         []byte
+	apiErrorMockData []byte
 }
 
 func TestTradesService(t *testing.T) {
@@ -38,11 +37,6 @@ func (s *tradesServiceTestSuite) BeforeTest(suiteName, testName string) {
 	  }
 	  `)
 
-	s.unmarshalMockData = []byte(`{
-		"error": 0,
-		"result":{}
-	  }
-	  `)
 	s.apiErrorMockData = []byte(`{
 		"error": 3,
 		"result": {}
@@ -124,14 +118,3 @@ func (s *tradesServiceTestSuite) TestGetTradesHTTPError() {
 	s.r().Error(err)
 	s.r().EqualError(err, "dummy error")
 }
-
-// func (s *tradesServiceTestSuite) TestGetTradesUnmarshalError() {
-// 	s.mockDo(s.unmarshalMockData, nil)
-// 	data, err := s.client.NewGetTradesTx().Symbol("THB_BTC").Limit(10).Do()
-// 	defer s.assertDo()
-
-// 	s.r().Nil(data)
-// 	s.r().Error(err)
-// 	s.r().EqualError(err, "json: cannot unmarshal object into Go struct field TradesResponse.result of type [][]interface {}")
-
-// }

@@ -11,9 +11,8 @@ import (
 
 type GetBalanceServiceTestSuite struct {
 	baseTestSuite
-	mockData          []byte
-	unmarshalMockData []byte
-	apiErrorMockData  []byte
+	mockData         []byte
+	apiErrorMockData []byte
 }
 
 func TestGetBalanceServiceTestSuite(t *testing.T) {
@@ -30,15 +29,7 @@ func (s *GetBalanceServiceTestSuite) BeforeTest(suiteName, testName string) {
 		}
 	  }
 	  `)
-	s.unmarshalMockData = []byte(`{
-		"error": 0,
-		"result": {
-		  "THB": { "available": "0", "reserved": "0" },
-		  "BTC": { "available": "0", "reserved": "0" },
-		  "ETH": { "available": "0", "reserved": "0" }
-		}
-	  }
-	  `)
+
 	s.apiErrorMockData = []byte(`{
 		"error": 3,
 		"result": {}
@@ -109,14 +100,3 @@ func (s *GetBalanceServiceTestSuite) TestGetBalanceAnyAPIError() {
 	s.r().Error(err)
 	s.r().EqualError(err, "error id: 3, error message: Invalid API key")
 }
-
-// func (s *GetBalanceServiceTestSuite) TestGetBalanceUnMarshalError() {
-// 	s.mockDo(s.unmarshalMockData, nil)
-
-// 	data, err := s.client.NewGetBalancesTx().Do()
-// 	defer s.assertDo()
-
-// 	s.r().Nil(data)
-// 	s.r().Error(err)
-// 	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field BalancesProps.result.THB.available of type float64")
-// }

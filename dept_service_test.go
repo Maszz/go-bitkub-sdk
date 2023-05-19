@@ -13,8 +13,7 @@ import (
 
 type DeptServiceTestSuite struct {
 	baseTestSuite
-	mockData          []byte
-	unmarshalMockData []byte
+	mockData []byte
 }
 
 func TestUserServiceTestSuite(t *testing.T) {
@@ -33,16 +32,6 @@ func (s *DeptServiceTestSuite) BeforeTest(suiteName, testName string) {
 		]
 	  }`) //
 
-	s.unmarshalMockData = []byte(`{
-		"asks": [
-		  ["916500", "0.20672591"],
-		  ["916519.66", "0.00196395"]
-		],
-		"bids": [
-		  ["916485.55", "0.02499999"],
-		  ["916485.04", "1.79799999"]
-		]
-	  }`) //
 }
 
 func (s *DeptServiceTestSuite) TestGetMarketDept() {
@@ -107,15 +96,3 @@ func (s *DeptServiceTestSuite) TestGetMarketDeptHttpError() {
 	s.r().Error(err)
 	s.r().EqualError(err, "http error")
 }
-
-// func (s *DeptServiceTestSuite) TestGetMarketDeptUnmarshalError() {
-// 	s.mockDo(s.unmarshalMockData, nil)
-
-// 	data, err := s.client.NewGetMarketDepthTx().Symbol(symbols.THB_BTC).Limit(2).Do()
-// 	defer s.assertDo()
-
-// 	s.r().Nil(data)
-// 	s.r().Error(err)
-// 	s.r().
-// 		EqualError(err, "json: cannot unmarshal string into Go struct field MarketDepthResponse.asks of type float64")
-// }

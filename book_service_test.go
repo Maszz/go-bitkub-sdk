@@ -12,9 +12,8 @@ import (
 
 type BookServiceTestSuite struct {
 	baseTestSuite
-	mockData          []byte
-	unmarshalMockData []byte
-	apiErrorMockData  []byte
+	mockData         []byte
+	apiErrorMockData []byte
 }
 
 func TestBookServiceTestSuit(t *testing.T) {
@@ -35,10 +34,7 @@ func (s *BookServiceTestSuite) BeforeTest(suiteName, testName string) {
 		  ]
 		}
 	  }`)
-	s.unmarshalMockData = []byte(`{
-		"error": 0,
-		"result": []
-	  }`)
+
 	s.apiErrorMockData = []byte(`{
 		"error": 3,
 		"result": {}
@@ -107,17 +103,6 @@ func (s *BookServiceTestSuite) TestGetMarketDeptHttpError() {
 	s.r().Error(err)
 	s.r().EqualError(err, "http error")
 }
-
-// func (s *BookServiceTestSuite) TestGetOpenBookUnmarshalError() {
-// 	s.mockDo(s.unmarshalMockData, nil)
-
-// 	data, err := s.client.NewGetBooksTx().Symbol(symbols.THB_BTC).Limit(2).Do()
-// 	defer s.assertDo()
-
-// 	s.r().Nil(data)
-// 	s.r().Error(err)
-// 	s.r().EqualError(err, "json: cannot unmarshal array into Go struct field OpenBooksResponse.result of type struct { Asks [][]interface {} \"json:\\\"asks\\\"\"; Bids [][]interface {} \"json:\\\"bids\\\"\" }")
-// }
 
 func (s *BookServiceTestSuite) TestGetOpenBookAPIError() {
 	s.mockDo(s.apiErrorMockData, nil)

@@ -12,7 +12,6 @@ import (
 type BidAskServiceTestSuite struct {
 	baseTestSuite
 	mockData                  []byte
-	unmarshalError            []byte
 	apiErrorMockData          []byte
 	placeBidMockData          []byte
 	placeBidUnmarshalMockData []byte
@@ -39,11 +38,6 @@ func (s *BidAskServiceTestSuite) BeforeTest(suiteName, testName string) {
 	  ["208247311", 1684343872, 128642.22, 914321.11, 0.14069699],
 	  ["208248207", 1684344196, 4537.57, 914098.62, 0.00496399]
 	]
-  }
-  `)
-	s.unmarshalError = []byte(`{
-	"error": 0,
-	"result": {}
   }
   `)
 	s.apiErrorMockData = []byte(`{
@@ -137,16 +131,6 @@ func (s *BidAskServiceTestSuite) TestGetBidsHTTPError() {
 	s.r().EqualError(err, "http error")
 }
 
-// func (s *BidAskServiceTestSuite) TestGetBidsUnmarshalError() {
-// 	s.mockDo(s.unmarshalError, nil)
-// 	bids, err := s.client.NewGetBidsTx().Symbol("THB_BTC").Limit(5).Do()
-// 	defer s.assertDo()
-
-// 	s.r().Nil(bids)
-// 	s.r().Error(err)
-// 	s.r().EqualError(err, "json: cannot unmarshal object into Go struct field BidsAsksResponse.result of type [][]interface {}")
-// }
-
 func (s *BidAskServiceTestSuite) TestGetBidsAPIError() {
 	s.mockDo(s.apiErrorMockData, nil)
 
@@ -219,16 +203,6 @@ func (s *BidAskServiceTestSuite) TestGetAsksSHTTPError() {
 	s.r().Error(err)
 	s.r().EqualError(err, "http error")
 }
-
-// func (s *BidAskServiceTestSuite) TestGetAsksUnmarshalError() {
-// 	s.mockDo(s.unmarshalError, nil)
-// 	bids, err := s.client.NewGetAsksTx().Symbol("THB_BTC").Limit(5).Do()
-// 	defer s.assertDo()
-
-// 	s.r().Nil(bids)
-// 	s.r().Error(err)
-// 	s.r().EqualError(err, "json: cannot unmarshal object into Go struct field BidsAsksResponse.result of type [][]interface {}")
-// }
 
 func (s *BidAskServiceTestSuite) TestGetAsksAPIError() {
 	s.mockDo(s.apiErrorMockData, nil)
@@ -305,16 +279,6 @@ func (s *BidAskServiceTestSuite) TestPlaceBidHTTPError() {
 	s.r().Error(err)
 	s.r().EqualError(err, "http error")
 }
-
-// func (s *BidAskServiceTestSuite) TestPlaceBidUnmarshalError() {
-// 	s.mockDo(s.placeBidUnmarshalMockData, nil)
-// 	bids, err := s.client.NewPlaceBidTx().Symbol("THB_BTC").Amount(100).OrderType(types.OrderTypeMarket).Do()
-// 	defer s.assertDo()
-
-// 	s.r().Nil(bids)
-// 	s.r().Error(err)
-// 	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field .result.amt of type float64")
-// }
 
 func (s *BidAskServiceTestSuite) TestPlaceBidAPIError() {
 	s.mockDo(s.apiErrorMockData, nil)
@@ -425,16 +389,6 @@ func (s *BidAskServiceTestSuite) TestPlaceAskHTTPError() {
 	s.r().Error(err)
 	s.r().EqualError(err, "http error")
 }
-
-// func (s *BidAskServiceTestSuite) TestPlaceAskUnmarshalError() {
-// 	s.mockDo(s.placeAskUnmarshalMockData, nil)
-// 	asks, err := s.client.NewPlaceAskTx().Symbol("THB_BTC").Amount(100).OrderType(types.OrderTypeMarket).Do()
-// 	defer s.assertDo()
-
-// 	s.r().Nil(asks)
-// 	s.r().Error(err)
-// 	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field .result.amt of type float64")
-// }
 
 func (s *BidAskServiceTestSuite) TestPlaceAskAPIError() {
 	s.mockDo(s.apiErrorMockData, nil)

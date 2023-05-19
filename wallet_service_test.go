@@ -11,9 +11,8 @@ import (
 
 type WalletServiceTestSuite struct {
 	baseTestSuite
-	mockData          []byte
-	unmarshalMockData []byte
-	apiErrorMockData  []byte
+	mockData         []byte
+	apiErrorMockData []byte
 }
 
 func TestWalletService(t *testing.T) {
@@ -29,16 +28,6 @@ func (s *WalletServiceTestSuite) BeforeTest(suiteName, testName string) {
 		  "ETH": 0,
 		  "WAN": 0,
 		  "ADA": 0
-		}
-	  }`)
-	s.unmarshalMockData = []byte(`{
-		"error": 0,
-		"result": {
-		  "THB": "0",
-		  "BTC": "0",
-		  "ETH": "0",
-		  "WAN": "0",
-		  "ADA": "0"
 		}
 	  }`)
 
@@ -92,28 +81,6 @@ func (s *WalletServiceTestSuite) TestGetWalletAnyHTTPError() {
 	s.r().Error(err)
 	s.r().EqualError(err, "HTTP Error")
 }
-
-// func (s *WalletServiceTestSuite) TestGetWalletUnmarshalError() {
-// 	s.mockDo(s.unmarshalMockData, nil)
-
-// 	data, err := s.client.NewGetWalletsTx().Do()
-// 	defer s.assertDo()
-
-// 	s.r().Nil(data)
-// 	s.r().Error(err)
-// 	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field WalletResult.result.THB of type float64")
-// }
-
-// func (s *WalletServiceTestSuite) TestGetWalletAnyUnmarshalError() {
-// 	s.mockDo(s.unmarshalMockData, nil)
-
-// 	data, err := s.client.NewGetWalletsTx().DoAny()
-// 	defer s.assertDo()
-
-// 	s.r().Nil(data)
-// 	s.r().Error(err)
-// 	s.r().EqualError(err, "json: cannot unmarshal string into Go struct field WalletResponseAny.result of type float64")
-// }
 
 func (s *WalletServiceTestSuite) TestGetWalletAPIError() {
 	s.mockDo(s.apiErrorMockData, nil)

@@ -11,8 +11,7 @@ import (
 
 type tradingViewServiceTestSuite struct {
 	baseTestSuite
-	mockData          []byte
-	unmarshalMockData []byte
+	mockData []byte
 }
 
 func TestTradingViewService(t *testing.T) {
@@ -31,16 +30,6 @@ func (s *tradingViewServiceTestSuite) BeforeTest(suiteName, testName string) {
 	  }
 	  `)
 
-	s.unmarshalMockData = []byte(`{
-		"c": [1691200, 1683819.64],
-		"h": [1692222.22, 1693000],
-		"l": [1671000, 1680000],
-		"o": [1682500, 1692222.17],
-		"s": 0,
-		"t": [1633424400, 1633428000],
-		"v": [22.001944110000036, 13.138984619999986]
-	  }
-	  `)
 }
 
 func (s *tradingViewServiceTestSuite) TestSetSymbol() {
@@ -144,13 +133,3 @@ func (s *tradingViewServiceTestSuite) TestGetTradingViewHistoryHTTPError() {
 	s.r().Error(err)
 	s.r().EqualError(err, "dummy error")
 }
-
-// func (s *tradingViewServiceTestSuite) TestGetTradingViewUnmarshalError() {
-// 	s.mockDo(s.unmarshalMockData, nil)
-// 	data, err := s.client.NewGetTradingviewHistoryTx().FromTimestamp(1633424400).ToTimestamp(1633428000).Resolution(types.Time1m).Symbol("THB_BTC").Do()
-// 	defer s.assertDo()
-
-// 	s.r().Nil(data)
-// 	s.r().Error(err)
-// 	s.r().EqualError(err, "json: cannot unmarshal number into Go struct field TradingViewHistoryResponse.s of type string")
-// }
