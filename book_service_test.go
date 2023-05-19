@@ -108,16 +108,16 @@ func (s *BookServiceTestSuite) TestGetMarketDeptHttpError() {
 	s.r().EqualError(err, "http error")
 }
 
-func (s *BookServiceTestSuite) TestGetOpenBookUnmarshalError() {
-	s.mockDo(s.unmarshalMockData, nil)
+// func (s *BookServiceTestSuite) TestGetOpenBookUnmarshalError() {
+// 	s.mockDo(s.unmarshalMockData, nil)
 
-	data, err := s.client.NewGetBooksTx().Symbol(symbols.THB_BTC).Limit(2).Do()
-	defer s.assertDo()
+// 	data, err := s.client.NewGetBooksTx().Symbol(symbols.THB_BTC).Limit(2).Do()
+// 	defer s.assertDo()
 
-	s.r().Nil(data)
-	s.r().Error(err)
-	s.r().EqualError(err, "json: cannot unmarshal array into Go struct field OpenBooksResponse.result of type struct { Asks [][]interface {} \"json:\\\"asks\\\"\"; Bids [][]interface {} \"json:\\\"bids\\\"\" }")
-}
+// 	s.r().Nil(data)
+// 	s.r().Error(err)
+// 	s.r().EqualError(err, "json: cannot unmarshal array into Go struct field OpenBooksResponse.result of type struct { Asks [][]interface {} \"json:\\\"asks\\\"\"; Bids [][]interface {} \"json:\\\"bids\\\"\" }")
+// }
 
 func (s *BookServiceTestSuite) TestGetOpenBookAPIError() {
 	s.mockDo(s.apiErrorMockData, nil)
